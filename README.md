@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Headless Filmmaking
 **Tools** to work with video/audio using headless tools like ffmpeg
 
@@ -16,3 +17,7 @@ o. Webcam capture using some cool techniques from FFMPEG GUY.
 
 
 *Every time I come back to git it takes me an hour or so to fix stupid mistakes and re-learn it again.*  In other words, ChatGPT my arse.  When AI can make GIT easy I'll start to pay attention :)
+=======
+# headless_filmmaking
+Tools to work with video/audio using headless tools like ffmpeg
+>>>>>>> d713c72 (Initial commit)
