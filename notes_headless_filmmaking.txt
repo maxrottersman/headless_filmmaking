@@ -1,0 +1,71 @@
+TO DO
+o. Do adjustments for screen scaling in screen capture
+o. Implement RunCMD
+o. Do x/y above middle of timecode window
+
+To draw OCR capture window
+https://www.autohotkey.com/boards/viewtopic.php?t=83702
+
+Other Research
+https://amiaopensource.github.io/ffmprovisr/
+
+****************************
+*** FOR WEBCAM RECORDING ***
+****************************
+
+* Get list of devices
+ffmpeg -list_devices true -f dshow -i dummy
+
+* if you want to output results to a text file you can more easily look at
+ffmpeg -list_devices true -f dshow -i dummy > my_devices_for_ffmpeg.txt
+
+* These are the VIDEO and AUDIO (MIC) devices that I have and want to use
+* YOURS WILL BE DIFFERENT!
+Elgato Facecam" (video)
+"@device_pnp_\\?\usb#vid_0fd9&pid_0078&mi_00#9&24dc6b3f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global"
+
+"In 1-2 (MOTU M Series)"
+"@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{52FF8AD0-16FD-4814-8A27-F4F4F48A1918}"
+
+* PLAY / TEST
+ffplay -f dshow -i video="@device_pnp_\\?\usb#vid_0fd9&pid_0078&mi_00#9&24dc6b3f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global"
+
+* For RECORDING
+ ffmpeg -f dshow -rtbufsize 200M -s 1280x720 -r 30 -i video="Elgato Facecam":audio="In 1-2 (MOTU M Series)" -vcodec copy -acodec copy webcam_capture.avi
+ 
+*******************************
+* Capture Window with audio
+*******************************
+
+Use Auto Hot Key (AHK) Spy to get window info 
+get_win_xy_size_for_ffmpeg.ahk
+
+ffmpeg -f gdigrab -offset_x 1200 -offset_y 190 -video_size 2578x1449 -i desktop -f dshow -i audio="In 1-2 (MOTU M Series)" -c:v libx264 -preset veryfast -pix_fmt yuv420p -vf "scale=1920x1080" -y s002_window_capture.mp4
+
+*******************************
+* EDITING
+*******************************
+
+* add TIMECODE
+ffmpeg -i s001_webcaminto_oldtv.avi -vf "drawtext=text='%{pts\:hms}':fontfile=tahoma.ttf:fontsize=48:fontcolor=white:box=1:boxborderw=6:boxcolor=black@0.75:x=(w-text_w)/2:y=h-text_h-20" -c:a copy webcaminfo_oldtv_TIMECODE.avi
+
+* put input BEFORE timestamps, also, need to re-render or lost beginning of video
+* Save in ProRes so as not to loose quality
+ffmpeg -i etest.avi -ss 00:00:01.367 -to 00:00:42.716 -c:v prores_ks -profile:v 1 -vendor apl0 -pix_fmt yuv422p10le -c:a copy etest_edit.mov
+
+-c:v dnxhd
+-c:v libx264
+-c:v prores_ks -profile:v 3 -vendor apl0 -bits_per_mb 8000 -pix_fmt yuv422p10le 
+
+0 ............ ........................ProRes 422, Proxy
+1 ............ ........................ProRes 422, LT
+2 .................................... ProRes 422, Standard
+3 ........... .........................ProRes 422, HQ
+
+CMD get all audio devices
+wmic sounddev list full
+of all through ffmpeg
+ffmpeg -list_devices true -f dshow -i dummy
+ffmpeg -list_devices true -f dshow -i dummy -hide_banner 2> mydevices.txt
+
+

@@ -1,0 +1,5 @@
+Description|Command
+Old TV Effect|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio -vf [in]eq=brightness=0.1,eq=contrast=1.5:saturation=1[eq];[eq]drawbox=t=20,drawgrid=h=10,boxblur=3:1,lenscorrection=k1=0.1[out] arg_CODEC_Video arg_CODEC_Audio -y argFilename
+Normal Capture 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio argFilename
+Capture Full|ffmpeg -f dshow -rtbufsize 2000M -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -y argFilename
+Normal Capture 720 (codec copy)|ffmpeg -f dshow -rtbufsize 1000000k -s 1280x720 -r 30 -i video=argVideo:audio=argAudio -vcodec copy -acodec copy argFilename

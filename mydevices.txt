@@ -1,0 +1,45 @@
+[dshow @ 0000019da04bb000] "Elgato Facecam" (video)
+[dshow @ 0000019da04bb000]   Alternative name "@device_pnp_\\?\usb#vid_0fd9&pid_0078&mi_00#9&24dc6b3f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global"
+[dshow @ 0000019da04bb000] "Snap Camera" (video)
+[dshow @ 0000019da04bb000]   Alternative name "@device_pnp_\\?\root#camera#0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global"
+[dshow @ 0000019da04bb000] "NDI Webcam Video 1" (video)
+[dshow @ 0000019da04bb000]   Alternative name "@device_pnp_\\?\root#media#0004#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\vidsource0"
+[dshow @ 0000019da04bb000] "NDI Webcam Video 2" (video)
+[dshow @ 0000019da04bb000]   Alternative name "@device_pnp_\\?\root#media#0004#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\vidsource1"
+[dshow @ 0000019da04bb000] "NDI Webcam Video 3" (video)
+[dshow @ 0000019da04bb000]   Alternative name "@device_pnp_\\?\root#media#0004#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\vidsource2"
+[dshow @ 0000019da04bb000] "NDI Webcam Video 4" (video)
+[dshow @ 0000019da04bb000]   Alternative name "@device_pnp_\\?\root#media#0004#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\vidsource3"
+[dshow @ 0000019da04bb000] "EƖgato Virtual Camera" (video)
+[dshow @ 0000019da04bb000]   Alternative name "@device_pnp_\\?\root#media#0002#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{45ab5b3b-2e15-4452-a2cb-87e5fdd026fb}"
+[dshow @ 0000019da04bb000] "PowerToys VideoConference Mute" (video)
+[dshow @ 0000019da04bb000]   Alternative name "@device_sw_{860BB310-5D01-11D0-BD3B-00A0C911CE86}\{31AD75E9-8C3A-49C8-B9ED-5880D6B4A764}"
+[dshow @ 0000019da04bb000] "OBS Virtual Camera" (video)
+[dshow @ 0000019da04bb000]   Alternative name "@device_sw_{860BB310-5D01-11D0-BD3B-00A0C911CE86}\{A3FCE0F5-3493-419F-958A-ABA1250EC20B}"
+[dshow @ 0000019da04bb000] "GoPro Webcam" (video)
+[dshow @ 0000019da04bb000]   Alternative name "@device_sw_{860BB310-5D01-11D0-BD3B-00A0C911CE86}\{FDB60968-EC75-4CF9-BC63-7A2C7FFBF210}"
+[dshow @ 0000019da04bb000] "NDI Webcam 4 (NewTek NDI Audio)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{4CB2767A-AD50-4A7B-A948-72CB8E74B61B}"
+[dshow @ 0000019da04bb000] "virtual-audio-capturer" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_sw_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\{8E146464-DB61-4309-AFA1-3578E927E935}"
+[dshow @ 0000019da04bb000] "In 1-2 (MOTU M Series)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{52FF8AD0-16FD-4814-8A27-F4F4F48A1918}"
+[dshow @ 0000019da04bb000] "VoiceMeeter Output (VB-Audio VoiceMeeter VAIO)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{6E2D1C7E-5993-4257-B5B7-7EFC3F121F7A}"
+[dshow @ 0000019da04bb000] "Loopback (MOTU M Series)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{7F31563C-5C85-4D35-A281-11FFC605667F}"
+[dshow @ 0000019da04bb000] "NDI Webcam 2 (NewTek NDI Audio)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{9E89ABF9-6AC6-4113-B5E9-D249C47F26BB}"
+[dshow @ 0000019da04bb000] "Loopback Mix (MOTU M Series)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{BD25F71B-E95E-46A8-A007-ED978DBF954F}"
+[dshow @ 0000019da04bb000] "Microphone (2- Sennheiser USB headset)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{C1739E15-D7A4-4197-8663-26524AF83C5B}"
+[dshow @ 0000019da04bb000] "In 3-4 (MOTU M Series)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{CCA34A31-9A11-4F44-A2F3-EBA9F63E879D}"
+[dshow @ 0000019da04bb000] "CABLE Output (VB-Audio Virtual Cable)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{F0337767-F60A-46C0-AD2A-D6DD9EA3FBE6}"
+[dshow @ 0000019da04bb000] "NDI Webcam 1 (NewTek NDI Audio)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{F469A569-1785-4353-8CC3-0336634FC108}"
+[dshow @ 0000019da04bb000] "NDI Webcam 3 (NewTek NDI Audio)" (audio)
+[dshow @ 0000019da04bb000]   Alternative name "@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{FFDCAA37-FAE9-4B54-AC75-C3AA2CA8E616}"
+dummy: Immediate exit requested

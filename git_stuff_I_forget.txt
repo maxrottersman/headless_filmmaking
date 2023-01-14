@@ -1,0 +1,4 @@
+
+In GIT Bash change folder
+
+cd /c/users/myname/project\ name
