@@ -219,7 +219,7 @@ Clipboard := ffmpeg_command
 ;Gui, Submit, NoHide
 GuiControl,, Edit_ffmpeg, %Clipboard%
 ;, %comspec% /k
-Run %comspec% /k %ffmpeg_command%,,,ffmpegPID
+RunWait %ffmpeg_command%,,,ffmpegPID
 ;WinWait ahk_pid %ffmpegID%
 ;msgbox %ffmpegID%
 ;Run ffmpeg %ffmpeg_command%
@@ -229,19 +229,23 @@ return
 
 Stop:
 {
-;WinWaitActive, ahk_exe ffmpeg.exe
+WinActivate, ahk_exe ffmpeg.exe
+WinShow, ahk_pid %ffmpegPID%
+Send % chr(0x03)
+Send chr(0x03)
+ControlSend, , chr(0x03), ahk_pid %ffmpegPID%  ; send ctrl-c to command window 
 ;Send ^c
 ;WinWait ahk_pid %ffmpegPID%
 ;WinActivate ahk_pid %ffmpegPID%
 ;Send ^c
 ;WinWaitActive, %ComSpec% ahk_pid %ffmpegPID%
-WinShow, ahk_pid %ffmpegPID%
+;WinShow, ahk_pid %ffmpegPID%
 ;SendInput ^c
 
 ;Sleep, 3000 ; wait 3 seconds so you can see the window
 ;q{Enter}
 ;ControlSend, , ^c, ahk_class ConsoleWindowClass 
-ControlSend, , {Enter}^c{Enter}, ahk_pid %ffmpegPID%  ; send ctrl-c to command window which stops 
+ControlSend, , chr(0x03), ahk_pid %ffmpegPID%  ; send ctrl-c to command window which stops 
 ;the recording
 ;{Ctrl Down}{c Down}
 ;	ControlSend,, ^c, % "ahk_pid " ProcessID ; Send ctrl-c to command window which stops the recording.
