@@ -2,3 +2,5 @@
 In GIT Bash change folder
 
 cd /c/users/myname/project\ name
+
+Mistake and I overwrote my local with partial on remove...okay starting over again with this!!!
