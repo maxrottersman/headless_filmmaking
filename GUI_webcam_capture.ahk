@@ -7,6 +7,7 @@ SetBatchLines -1
 ; https://github.com/hi5/CSV
 #Include csv.ahk
 
+SetTitleMatchMode, 2
 
 ; ********* MEM VARS ETC *************
 global xKeys := []
@@ -17,6 +18,9 @@ global CB_hvenc
 CB_hvenc := 0
 global hvenc_bitrate
 hvenc_bitrate := 10000K
+
+global winTitle
+winTitle := "ahk_class CASCADIA_HOSTING_WINDOW_CLASS"
 
 ; Load our ffmpeg commands from our text file
 CSV_Load("ffmpeg_commands.txt","xCmds_csv","|")
@@ -219,7 +223,21 @@ Clipboard := ffmpeg_command
 ;Gui, Submit, NoHide
 GuiControl,, Edit_ffmpeg, %Clipboard%
 ;, %comspec% /k
-RunWait %comspec% /k %ffmpeg_command%,,,ffmpegPID
+Run %ffmpeg_command%,,UseErrorLevel,ffmpegPID
+
+
+;WinWait,ahk_pid %ffmpegPID%
+;sleep 2000
+;WinGetTitle, MyWindowTitle,ahk_pid %ffmpegPID%
+;msgbox, %myWindowTitle%
+
+;Process, Exist, ffmpeg.exe ; errorlevel will be PID of process
+;WinGetTitle, ffmpegPID, ahk_pid %errorlevel%
+
+;if ErrorLevel = ERROR
+;    Msgbox Error occured
+;msgbox % ffmpegPID
+;WinWait ahk_pid %ffmpegPID%
 ;WinWait ahk_pid %ffmpegID%
 ;msgbox %ffmpegID%
 ;Run ffmpeg %ffmpeg_command%
@@ -229,22 +247,54 @@ return
 
 Stop:
 {
+
+WinActivate, ahk_exe WindowsTerminal.exe
+;WinActivate, ahk_exe i)\\ffmpeg\.exe$
+;WinActivate, ahk_exe C:\Max_Software\ffmpeg.exe
+;#IfWinActive ahk_exe C:\Max_Software\ffmpeg.exe
+;WinGetTitle, winTitle,ffmpeg.exe,ffmpeg.exe
+;cmdID :=WinExist(,ffmpeg.exe)
+;WinGetTitle, Title, ahk_id %cmdID%
+;msgbox %Title%
+;WinActivate, ahk_id, %cmdID%
+;WinGetClass, winTitle,,ffmpeg.exe
+;msgbox %winTitle%
+;#If WinExist(winTitle)
+;WinActivate
+Send q
+;WinWaitClose
+;Return
+;#IfWinActive
+
+;#IfWinExist ahk_exe ffmpeg.exe
+;WinActivate
+;Send q
+;Return
+;#IfWinExist
+;{
+;If WinExist(winTitle)
+;{
+;WinActivate
+;Send q  
+;}
+
 ;ControlGetFocus ffmpegPID, A
 ;SendMessage 0x113, 1, , %ffmpegPID%, A
 ;ConsoleSend(chr(0x113), "ahk_class ConsoleWindowClass")
 ;ConsoleSend(chr(0x03), "ahk_class ConsoleWindowClass")
 ;ConsoleSend(chr(0x03), "ahk_class ConsoleWindowClass")
-WinActivate, ahk_exe ffmpeg.exe
-WinShow, ahk_pid %ffmpegPID%
-Send q
+;WinActivate, ahk_exe ffmpeg.exe
+;WinShow, ahk_pid %ffmpegPID%
+;Send q
 
 ;Send % chr(0x03)
 ;Send chr(0x03)
 ;ControlSend, , chr(0x113), ahk_pid %ffmpegPID%  ; send ctrl-c to command window 
 ;Send ^c
-;WinWait ahk_pid %ffmpegPID%
+
 ;WinActivate ahk_pid %ffmpegPID%
-;Send ^c
+;msgbox %ffmpegPID%
+;Send q
 ;WinWaitActive, %ComSpec% ahk_pid %ffmpegPID%
 ;WinShow, ahk_pid %ffmpegPID%
 ;SendInput ^c
