@@ -3,9 +3,8 @@
 winTitle := "ahk_class CASCADIA_HOSTING_WINDOW_CLASS"
 
 F3::                        ; F3 = Start capture
-SetTitleMatchMode, 2
-WinGetTitle, winTitle,,ffmpeg.exe
-msgbox %winTitle%
+; example DllCall
+DllCall("MessageBox","Uint",0,"Str","This Message is poped through DLLcall","Str","I typed that title","Uint","0x00000036L")
 Return
 
 #If WinExist(winTitle)

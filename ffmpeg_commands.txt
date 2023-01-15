@@ -3,4 +3,3 @@ Old TV Effect|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:aud
 Normal Capture 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio argFilename
 Capture Full|ffmpeg -f dshow -rtbufsize 2000M -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -y argFilename
 Normal Capture 720 (codec copy)|ffmpeg -f dshow -rtbufsize 1000000k -s 1280x720 -r 30 -i video=argVideo:audio=argAudio -vcodec copy -acodec copy argFilename
-Mikeyww|ffmpeg -f dshow -video_size 1280x720 -rtbufsize 702000k -framerate 30 -i video= argVideo -r 30 -threads 4 -vcodec mjpeg -crf 0 -preset ultrafast -f mpegts -y mikeyww.mkv

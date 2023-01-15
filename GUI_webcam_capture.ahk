@@ -222,94 +222,28 @@ Clipboard := ffmpeg_command
 
 ;Gui, Submit, NoHide
 GuiControl,, Edit_ffmpeg, %Clipboard%
-;, %comspec% /k
+;, %comspec% /k ; use /k to keep window open after processing
 Run %ffmpeg_command%,,UseErrorLevel,ffmpegPID
-
-
-;WinWait,ahk_pid %ffmpegPID%
-;sleep 2000
-;WinGetTitle, MyWindowTitle,ahk_pid %ffmpegPID%
-;msgbox, %myWindowTitle%
-
-;Process, Exist, ffmpeg.exe ; errorlevel will be PID of process
-;WinGetTitle, ffmpegPID, ahk_pid %errorlevel%
-
-;if ErrorLevel = ERROR
-;    Msgbox Error occured
-;msgbox % ffmpegPID
-;WinWait ahk_pid %ffmpegPID%
-;WinWait ahk_pid %ffmpegID%
-;msgbox %ffmpegID%
-;Run ffmpeg %ffmpeg_command%
 
 }
 return
 
 Stop:
 {
-
-WinActivate, ahk_exe WindowsTerminal.exe
-;WinActivate, ahk_exe i)\\ffmpeg\.exe$
-;WinActivate, ahk_exe C:\Max_Software\ffmpeg.exe
-;#IfWinActive ahk_exe C:\Max_Software\ffmpeg.exe
-;WinGetTitle, winTitle,ffmpeg.exe,ffmpeg.exe
-;cmdID :=WinExist(,ffmpeg.exe)
-;WinGetTitle, Title, ahk_id %cmdID%
-;msgbox %Title%
-;WinActivate, ahk_id, %cmdID%
-;WinGetClass, winTitle,,ffmpeg.exe
-;msgbox %winTitle%
-;#If WinExist(winTitle)
-;WinActivate
-Send q
-;WinWaitClose
-;Return
-;#IfWinActive
-
-;#IfWinExist ahk_exe ffmpeg.exe
-;WinActivate
-;Send q
-;Return
-;#IfWinExist
-;{
-;If WinExist(winTitle)
-;{
-;WinActivate
-;Send q  
-;}
-
-;ControlGetFocus ffmpegPID, A
-;SendMessage 0x113, 1, , %ffmpegPID%, A
-;ConsoleSend(chr(0x113), "ahk_class ConsoleWindowClass")
-;ConsoleSend(chr(0x03), "ahk_class ConsoleWindowClass")
-;ConsoleSend(chr(0x03), "ahk_class ConsoleWindowClass")
-;WinActivate, ahk_exe ffmpeg.exe
-;WinShow, ahk_pid %ffmpegPID%
-;Send q
-
-;Send % chr(0x03)
-;Send chr(0x03)
-;ControlSend, , chr(0x113), ahk_pid %ffmpegPID%  ; send ctrl-c to command window 
-;Send ^c
-
-;WinActivate ahk_pid %ffmpegPID%
-;msgbox %ffmpegPID%
-;Send q
-;WinWaitActive, %ComSpec% ahk_pid %ffmpegPID%
-;WinShow, ahk_pid %ffmpegPID%
-;SendInput ^c
-
-;Sleep, 3000 ; wait 3 seconds so you can see the window
-;q{Enter}
-;ControlSend, , ^c, ahk_class ConsoleWindowClass 
-;ControlSend, , chr(0x03), ahk_pid %ffmpegPID%  ; send ctrl-c to command window which stops 
-;the recording
-;{Ctrl Down}{c Down}
-;	ControlSend,, ^c, % "ahk_pid " ProcessID ; Send ctrl-c to command window which stops the recording.
-;	SplashTextOff
-;	SplashTextOn, 300, 80, Recording Stopped, Check the video file of where you saved it to and enjoy your recorded session.
-;	Sleep 3000
-;	SplashTextOff
+; @maclev at AHK saves the day here.  But I don't fully understand
+; his solution...
+DllCall("AttachConsole", "uint", ffmpegPID)
+hConIn := DllCall("CreateFile", "str", "CONIN$", "uint", 0xC0000000, "uint", 0x3, "ptr", 0, "uint", 0x3, "uint", 0, "ptr", 0, "ptr")
+VarSetCapacity(ir, 20, 0)       ; ir := new INPUT_RECORD
+NumPut(1, ir, 0, "UShort")      ; ir.EventType := KEY_EVENT
+NumPut(1, ir, 8, "UShort")      ; ir.KeyEvent.wRepeatCount := 1
+NumPut(asc("q"), ir, 14, "UShort")
+NumPut(true, ir, 4, "Int")  ; ir.KeyEvent.bKeyDown := true
+DllCall("WriteConsoleInput", "ptr", hConIn, "ptr", &ir, "uint", 1, "uint*", 0)
+NumPut(false, ir, 4, "Int") ; ir.KeyEvent.bKeyDown := false
+DllCall("WriteConsoleInput", "ptr", hConIn, "ptr", &ir, "uint", 1, "uint*", 0)
+DllCall("CloseHandle", "ptr", hConIn)
+DllCall("FreeConsole")
 }
 Return
 
