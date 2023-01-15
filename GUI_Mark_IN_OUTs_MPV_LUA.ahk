@@ -24,7 +24,7 @@ Gui +hWndhGUITrimmer
 Gui Add, Button, gMark_IN x20 y0 w80 h30, Mark &In
 Gui Add, Button, gMark_OUT x114 y0 w80 h30, Mark &OUT
 Gui Add, Button, hWndhBtnReset5 gReset x207 y0 w80 h30, &Reset
-ControlColor(hBtnReset5, hMainWnd, 0xFFFF00)
+;ControlColor(hBtnReset5, hMainWnd, 0xFFFF00)
 Gui Add, Text, x20 y40 w29 h30 +0x200, IN:
 Gui Add, Edit, vIN x51 y40 w200 h30 
 Gui Add, Text, x260 y40 w52 h30 +0x200, OUT:
