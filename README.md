@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Headless Filmmaking
 **Tools** to work with video/audio using headless tools like ffmpeg.  These all work, but far from robust.  
 
