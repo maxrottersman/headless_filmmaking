@@ -1,7 +1,7 @@
 # Headless Filmmaking
 **Tools** to work with video/audio using headless tools like ffmpeg.  These all work, but far from robust.  
 
-***IN DEVELOPMENT!***
+***IN DEVELOPMENT!*** Using ffmpeg builds from [Gyan.dev](https://www.gyan.dev/ffmpeg/builds/)
 
 o. Fast conversion of media files
 
@@ -21,3 +21,4 @@ o. Webcam capture using some cool techniques from FFMPEG GUY.
 
 
 
+Big thanks for inspiration from [FFMPEG GUY](https://www.youtube.com/@theFFMPEGguy). @maclev on the AHK forum solved a very difficult problem I came up against in the ffmpeg webcam capture script.
