@@ -87,9 +87,9 @@ Gui Add, Edit, vEdit_ffmpeg x31 y320 w400 h100
 Gui, Add, CheckBox, x31 y440 vCheckBox1 gCB_hvenc, Use HVENC ; can set to checked
 Gui Add, DropDownList, vHvenc_b x120 y436 w100 hwndDDLHVENC_B, 10000K||50000K|100000K|200000K|300000K|400000K|500000K|800000K|1000000K
 
-Gui Add, Button, x31 y530 w80 h23, Test2
+;Gui Add, Button, x31 y530 w80 h23, Test2
 Gui Add, Button, x126 y500 w80 h42 gCaptureWebcam, &Capture!
-Gui Add, Button, x210 y500 w80 h42 gStop, Stop Rec!
+Gui Add, Button, x214 y500 w80 h42 gStop, Stop Rec!
 Gui Add, Button, x300 y500 w60 h42 gPlay, &Play
 Gui Add, Button, x370 y500 w80 h42 gExit, E&xit
 

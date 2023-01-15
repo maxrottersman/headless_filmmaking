@@ -1,5 +1,13 @@
 Description|Command
-Old TV Effect|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio -vf [in]eq=brightness=0.1,eq=contrast=1.5:saturation=1[eq];[eq]drawbox=t=20,drawgrid=h=10,boxblur=3:1,lenscorrection=k1=0.1[out] arg_CODEC_Video arg_CODEC_Audio -y argFilename
 Normal Capture 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio argFilename
 Capture Full|ffmpeg -f dshow -rtbufsize 2000M -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -y argFilename
+Old TV Effect|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio -vf [in]eq=brightness=0.1,eq=contrast=1.5:saturation=1[eq];[eq]drawbox=t=20,drawgrid=h=10,boxblur=3:1,lenscorrection=k1=0.1[out] arg_CODEC_Video arg_CODEC_Audio -y argFilename
+Negative Colors 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -vf negate -y argFilename
+Black and White 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -vf hue=s=0 -y argFilename
+Creepy B/W 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -vf drawbox=t=20,drawgrid=h=10,boxblur=3:1,format=gbrp,lenscorrection=k1=0.1,format=yuv420p,hue=s=0,vignette='PI/4+random(1)*PI/50':eval=frame,eq=contrast=1.2:brightness=0:saturation=1:gamma=1 -y argFilename
+RGB Shift 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -vf rgbashift=rh=20:bh=-20 -pix_fmt yuv420p -y argFilename
+Sepia 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -filter_complex colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131 -pix_fmt yuv420p -y argFilename
+Night Vision 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -vf "colorchannelmixer=.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3,colorbalance=0:.3:0:0:.3:0:0:.3:0,eq=contrast=1.9:brightness=0:saturation=1:gamma=1:gamma_r=1:gamma_g=1.4:gamma_b=1:gamma_weight=1" -pix_fmt yuv420p -y argFilename
+Video Noise 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -bsf:v noise=900000 -y argFilename
+Instagram 1x1 crop 720|ffmpeg -f dshow -rtbufsize 2000M -s 1280x720 -i video=argVideo:audio=argAudio arg_CODEC_Video arg_CODEC_Audio -vf "crop=720:720" -y argFilename
 Normal Capture 720 (codec copy)|ffmpeg -f dshow -rtbufsize 1000000k -s 1280x720 -r 30 -i video=argVideo:audio=argAudio -vcodec copy -acodec copy argFilename
