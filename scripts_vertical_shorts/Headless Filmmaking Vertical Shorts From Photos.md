@@ -2,7 +2,7 @@
 
 First, we want to take our photos and set their height to the height of our vertical video (shorts); that is, 1920 in most cases
 
-[Sample short created](https://youtube.com/shorts/B_dL4saQyUg?feature=share)
+View: [Sample short created](https://youtube.com/shorts/B_dL4saQyUg?feature=share)
 
 
 ```powershell
