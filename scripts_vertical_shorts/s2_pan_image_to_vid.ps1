@@ -7,7 +7,7 @@ $captions = Import-Csv .\captions.txt -delimiter "|"
 
 	Write-host $filenumber $captiontext
 
-	$cmd = "ffmpeg -loop 1 -i $($filenumber).jpg -framerate 30 -vf crop=1080:1920:n*4:0 -frames:v 150 -y $($filenumber)panned.mkv"
+	$cmd = "ffmpeg -loop 1 -i $($filenumber).jpg -framerate 30 -vf crop=1080:1920:n*6:0 -frames:v 150 -y $($filenumber)panned.mkv"
 	
 	Write-host  $cmd
 	Invoke-Expression $cmd
