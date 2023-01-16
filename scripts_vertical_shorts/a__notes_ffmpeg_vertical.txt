@@ -1,0 +1,160 @@
+NOTE: Can't get ffplay to run webcam same as ffmpeg without buffer overruns
+
+* Get list of devices
+ffmpeg -list_devices true -f dshow -i dummy
+
+POWERSHELL
+Get-ChildItem -Recurse -Filter *.mov |  
+ForEach -Process { ffmpeg -i $_ -c:v libx264 -crf 16 ($_.BaseName + '.mp4')}
+
+***************************
+*** FINAL PROCESS *********
+***************************
+
+*** Webcam TV Effect ***
+ffmpeg.exe -f dshow -rtbufsize 2000M -s 1280x720 -i video="@device_pnp_\\?\usb#vid_0fd9&pid_0078&mi_00#9&24dc6b3f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global":audio="@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{52FF8AD0-16FD-4814-8A27-F4F4F48A1918}" -vf [v:0]eq=brightness=0.1,eq=contrast=1.5:saturation=1,drawbox=t=20,drawgrid=h=10,boxblur=3:1,lenscorrection=k1=0.1[out] -c:v libx264 -crf 0 -preset ultrafast -c:a aac -b:a 128k -y webcam.mp4
+
+*** To 30fps and SCALE TO 1080 for vertical video ***
+ffmpeg -i webcam.mp4 -r 30 -filter_complex "scale=1080:-1" -c:v libx264 -y webcam_30fps_1080.mp4
+
+*** ADD WEBCAM (scaled at 1080) to VERTICAL video (1080x1920)
+ffmpeg -i bg_video_1080x1920.mp4 -i webcam_30fps_1080.mp4 -filter_complex "[0:v]pad=1080:1920:(ow-iw)/2:(oh-ih)/2:white[bg];[bg][1:v]overlay=0:0[out]" -map [out] -filter_complex amerge=inputs=2 -y webcam_over_bg.mp4
+
+*** SIDE: Create Waveform ***
+ffmpeg -i webcam_over_bg.mp4 -filter_complex "[0:a]showwaves=mode=cline:s=hd720:colors=cyan[v]" -map "[v]" -map 0:a -c:v libvpx-vp9 -b:v 2M -y waveform_video.webm
+
+*** NOW OVERLAY transparent waveform on vide with me and vert vid ***
+ffmpeg -i webcam_over_bg.mp4 -c:v libvpx-vp9 -i waveform_video.webm -filter_complex "[0:v][1:v]overlay=y=1300" -map 0:a -y webcam_over_bg_plus_waveform.mp4
+
+*** CAPTURE drawing/writing on screen with this (assume black background 576 1/3 or 480 1/4) ***
+ffmpeg -f gdigrab -show_region 1 -framerate 15 -video_size 1080x576 -offset_x 1600 -offset_y 100 -i  desktop -vf "colorkey=black,format=rgba" -c:v libvpx-vp9 -b:v 2M -y writing_titling.webm
+
+*** CUT TO ONE MINUTE
+ ffmpeg -i writing_titling.webm -ss 00:00:01 -to 00:01:01 -c:v copy -c:a copy writing_titling_1min.webm
+
+*** OVERLAY TRANSPARENT TEXT/WRITING
+ffmpeg -i webcam_over_bg_plus_waveform.mp4 -c:v libvpx-vp9 -i writing_titling_1min.webm -filter_complex "[0:v][1:v]overlay=y=800" -map 0:a final_short.mp4
+
+************************
+PAN IMAGES
+************************
+ ffmpeg -loop 1 -i 1.jpg -framerate 30 -vf crop=1080:1920:n:0 -frames:v 150 -y out.mkv
+ *** n is nanoseconds, so this is a faster pan
+  ffmpeg -loop 1 -i 1.jpg -framerate 30 -vf crop=1080:1920:n*4:0 -frames:v 150 -y out.mkv
+  
+  ** TEXT OVERLAY ***
+   ffmpeg -f gdigrab -show_region 1 -framerate 15 -video_size 1000x1400 -offset_x 2200 -offset_y 500 -i  desktop -vf "colorkey=black,format=rgba" -c:v libvpx-vp9 -b:v 2M -y writing_titling.webm
+
+***********************
+*** END ***************
+***********************
+old delete?
+ffmpeg -i bg_video_1080x1920 -i webcam_30fps_1080.mp4 -filter_complex "[0:v]pad=1080280:2275:(ow-iw)/2:(oh-ih)/2:white[bg];[bg][1:v]overlay=0:0[out]" -map [out] -map 0:a -y overlay3.mp4
+*** Merge audio from both files ***
+ffmpeg -i dogvert.mp4 -i maxcamtv_1280.mp4 -filter_complex "[0:v]scale=1280:-1[bg];[bg][1:v]overlay=0:0[out]" -map [out]:v -filter_complex amerge=inputs=2 -y overlay6.mp4
+
+colorkey=red,format=rgba
+
+
+ ffmpeg -f gdigrab -show_region 1 -framerate 15 -video_size 1280x640 -offset_x 2000 -offset_y 200  -i desktop -c:v libvpx-vp9 -b:v 2M -filter_complex "[0]split[m][a];[a]format=yuv444p,geq='if(gt(lum(X,Y),0),255,0)',hue=s=0[al];[m][al]alphamerge[ovr];[0][ovr]overlay=(main_w-overlay_w):main_h-overlay_h[v]" -map "[v]" -y out3.webm
+
+ffmpeg -f gdigrab -show_region 1 -framerate 30 -video_size 1280x640 -offset_x 2000 -offset_y 1500 -i desktop out.mpg
+
+* capture window gdi
+CMDffmpeg_capwaudio := "ffmpeg -f gdigrab -offset_x " TL_x " -offset_y " TL_y " -video_size " CapWin_Width  "x" CapWin_Height " -i desktop -f dshow -i audio=" MyDevicesDLL_selected " -c:v libx264 -preset veryfast -pix_fmt yuv420p -vf ""scale=1920x1080"" -y " a_scriptdir "\atest_capture.mp4"
+GuiControl,,Edit_ffmpeg,%CMDffmpeg_capwaudio% ;%Clipboard%
+
+
+OTHER...
+
+* works solid background
+ffplay -f lavfi -i color=white:720x1280:d=3,format=rgb24
+
+* works | Center of video (white background)
+ ffmpeg -i maxcamtv.mp4 -vf "pad=1280:2275:(ow-iw)/2:(oh-ih)/2:white" output02.mp4
+ 
+* works | Top of video (white background)
+ffmpeg -i maxcam.mp4 -vf "pad=1280:2275:0:0:white" output03.mp4
+
+* 2 cams
+
+Works...
+* First, I want to create a video of TV me with 1280 with (turns out 1280x720)
+ffmpeg -i maxcamtv.mp4 -filter_complex "scale=1280:-1" -y maxcamtv_1280.mp4
+
+* Now I want to position that video on the top of the dog vertical video
+ffmpeg -i dogvert.mp4 -i maxcamtv_1280.mp4 -filter_complex "[0:v][1:v]overlay=(W-w)/2:(H-h)/2[tmp];[tmp]crop=720:1280:(2276-720)/2:0[out]" -map [out] -map 0:a -y overlay1.mp4
+
+* above I took up too much space, so need to scale dog bigger
+* it works, I'm at center, white padding around dog, but I want to put me at top
+ffmpeg -i dogvert.mp4 -i maxcamtv_1280.mp4 -filter_complex "[0:v]pad=1280:2275:(ow-iw)/2:(oh-ih)/2:white[bg];[bg][1:v]overlay=(W-w)/2:(H-h)/2[out]" -map [out] -map 0:a -y overlay2.mp4
+
+* this works, now I'm at top
+ffmpeg -i dogvert.mp4 -i maxcamtv_1280.mp4 -filter_complex "[0:v]pad=1280:2275:(ow-iw)/2:(oh-ih)/2:white[bg];[bg][1:v]overlay=0:0[out]" -map [out] -map 0:a -y overlay3.mp4
+
+* Works.  Without padding, just scale up
+ffmpeg -i dogvert.mp4 -i maxcamtv_1280.mp4 -filter_complex "[0:v]scale=1280:-1[bg];[bg][1:v]overlay=0:0[out]" -map [out] -map 0:a -y overlay4.mp4
+
+* Me audio, not just dog which is in above
+ffmpeg -i dogvert.mp4 -i maxcamtv_1280.mp4 -filter_complex "[0:v]scale=1280:-1[bg];[bg][1:v]overlay=0:0[out]" -map [out] -map 1:a -y overlay5.mp4
+
+* Merge audio from both files
+ffmpeg -i dogvert.mp4 -i maxcamtv_1280.mp4 -filter_complex "[0:v]scale=1280:-1[bg];[bg][1:v]overlay=0:0[out]" -map [out]:v -filter_complex amerge=inputs=2 -y overlay6.mp4
+
+--------------
+* WAVEFORM TRANSPARENT
+ffmpeg -i dogvert.mp4 -filter_complex "[0:a]showwaves=mode=cline:s=hd720:colors=cyan[v]" -map "[v]" -map 0:a -c:v libvpx-vp9 -b:v 2M -y waveform_dogvert.webm
+
+* combine shift down waveform
+ffmpeg -i overlay6.mp4 -c:v libvpx-vp9 -i waveform_dogvert.webm -filter_complex "[0:v][1:v]overlay=y=1600" -map 0:a overlay6_plus_waveform.mp4
+
+-------------
+* Works | not sure how (anyway, background blurred)
+ffmpeg -i dogvert.mp4 -i maxcamtv.mp4 -filter_complex "[0:v]pad=1280:2275:(ow-iw)/2:(oh-ih)/2:white[bg];[1:v]scale=720-1[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[tmp];[tmp]crop=720:1280:(2276-720)/2:0[out]" -map [out] -map 0:a -y output04.mp4
+
+* Try with white background
+ffmpeg -f lavfi -i testsrc=duration=10:size=1280x720:rate=30 -filter_complex "[0:v]scale=2276:1280" maxcamtv_vertical.mp4
+
+ffmpeg -i maxcamtv.mp4 -f lavfi -i testsrc=duration=10:size=1280x720:rate=30 -filter_complex ""[0:v]scale=2276:1280[fg];[1:v]scale=2276:1280[bg];[bg][fg]overlay=(W-w)/2:(H-h)/2[tmp];[tmp]crop=720:1280:(2276-720)/2:0[out]"" -map [out] -map 0:a maxcamtv_vertical.mp4
+
+ffmpeg -i maxcamtv.mp4 -f lavfi -i color=white:720x1280:d=3,format=rgb24 -filter_complex ""[0:v]scale=2276:1280[fg];[1:v]scale=2276:1280[bg];[bg][fg]overlay=(W-w)/2:(H-h)/2[tmp];[tmp]crop=720:1280:(2276-720)/2:0[out]"" -map [out] -map 0:a maxcamtv_vertical.mp4
+
+
+* Work, webcam in TV (from ffmpeg guy)
+https://youtu.be/z9eiVlgsDE4
+ffmpeg -i input.mp4 -vf drawbox=t=20,drawgrid=h=10,boxblur=3:1,format=gbrp,lenscorrection=k1=0.1,format=yuv420p output01.mp4
+
+* works
+ ffmpeg.exe -f dshow -rtbufsize 2000M -s 1280x720 -i video="@device_pnp_\\?\usb#vid_0fd9&pid_0078&mi_00#9&24dc6b3f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global":audio="@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{52FF8AD0-16FD-4814-8A27-F4F4F48A1918}" -vf [v:0]eq=brightness=0.1,eq=contrast=1.5:saturation=1,drawbox=t=20,drawgrid=h=10,boxblur=3:1,lenscorrection=k1=0.1[out] -c:v libx264 -crf 0 -preset ultrafast -c:a aac -b:a 128k -y maxcamtv.mp4
+
+* webcam
+ffplay -f dshow -vf "pad=1280:1920:(ow-iw)/2:(oh-ih)/2,crop=1280:-1:1:1" -rtbufsize 2000M -i video="@device_pnp_\\?\usb#vid_0fd9&pid_0078&mi_00#9&24dc6b3f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global":audio="@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{52FF8AD0-16FD-4814-8A27-F4F4F48A1918}" 
+
+ffplay -f dshow -vf "crop=720:720" -rtbufsize 2000M -i video="@device_pnp_\\?\usb#vid_0fd9&pid_0078&mi_00#9&24dc6b3f&0&0000#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\global":audio="@device_cm_{33D9A762-90C8-11D0-BD43-00A0C911CE86}\wave_{52FF8AD0-16FD-4814-8A27-F4F4F48A1918}" -thread_queue_size 5096
+
+OVERLAY: The first input is the "main" video on which the second input is overlaid.
+The x, and y expressions can contain the following parameters.
+
+main_w, W
+main_h, H
+The main input width and height.
+
+overlay_w, w
+overlay_h, h
+The overlay input width and height.
+
+FROM INTERNET:
+
+ffplay -f lavfi -i color=r=2:d=1 -loop 1 -framerate 2
+
+Overlay the image onto a black canvas.
+
+ffmpeg -f lavfi -i color=r=2:d=1 -loop 1 -framerate 2 -i albumcover.png -i audio.wav -filter_complex "[0][1]scale2ref=oh*16/9:ih[bg][img];[bg][img]overlay=x=(W-w)/2:(H-h)/2,setsar=1" -c:v libx264 -preset medium -tune stillimage -crf 18 -c:a copy -shortest -fflags +shortest -max_interleave_delta 100M output.mkv
+
+overlay=0:0
+vf scale=320:-1
+Basically I added -thread_queue_size 5096 to each input, haven't dropped a frame on ingestion since. Everything stays in sync, footage is buttery smooth.
+
+*** webcam format from ffprobe
+Stream #0:0: Video: rawvideo (UYVY / 0x59565955), uyvy422(tv, bt470bg/bt709/unknown), 1920x1080, 60 fps, 60 tbr, 10000k tbn
+Stream #0:1: Audio: pcm_s16le, 44100 Hz, 2 channels, s16, 1411 kb/s
