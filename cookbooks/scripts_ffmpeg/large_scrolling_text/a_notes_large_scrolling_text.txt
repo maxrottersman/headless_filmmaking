@@ -1,0 +1,15 @@
+LARGE SCROLLING TEXT FOR SHORTS
+
+* WORKING 
+* y=(h-100*(t/3))-(h/3)
+* or start with height 'y' - 100 pixels, then multiple by time factor for movement
+* - MINUS the height factor, where up the screen the scrolling text starts from (h/3 = 1/3d up screen)
+
+* TESTING
+
+ffmpeg -f lavfi -i color=c=black:s=1080x1920:r=30 -filter_complex  "[0]split[txt][orig];[txt]drawtext=fontfile=tahoma.ttf:fontsize=80:fontcolor=green:x=100:y=(h-100*(t/2))-(h/2):textfile=Scroll.txt:bordercolor=white:borderw=3[txt];[orig]crop=iw:50:0:0[orig];[txt][orig]overlay" -c:v  libx264 -c:v h264 -f matroska - | ffplay -
+
+* PRODUCTION
+
+ffmpeg -i NYT_scroll.mp4 -filter_complex  "[0]split[txt][orig];[txt]drawtext=fontfile=tahoma.ttf:fontsize=80:fontcolor=green:x=100:y=(h-100*(t/2))-(h/2):textfile=Scroll.txt:bordercolor=white:borderw=3[txt];[orig]crop=iw:50:0:0[orig];[txt][orig]overlay" -c:v  libx264 -y NYT_scroll_with_text_scrolling.mp4
+

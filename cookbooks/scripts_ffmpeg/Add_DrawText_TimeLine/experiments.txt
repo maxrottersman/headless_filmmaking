@@ -1,0 +1,59 @@
+
+# add text between 00:15 and 00:20 in video
+ffmpeg -i webcam1.mp4 -filter_complex "drawtext=text='Summer Video':fontsize=80:enable='between(t,5,20)',fade=t=in:start_time=5:d=0.5:alpha=1,fade=t=out:start_time=16:d=0.5:alpha=1[fg];[0][fg]overlay=format=auto,format=yuv420p" -c:a copy output.mp4
+
+# box appears at 3
+# This WORKS, just make t at zero at time start!
+ffmpeg -i webcam.mp4 -filter_complex "drawtext=text='Max Rottersman':fontsize=80:y=h*.8:x=min(1*(((t-3))*100)\,100):box=1:boxcolor=gray:boxborderw=10:alpha=.8:enable='between(t,3,20)'[fg];[0][fg]overlay=format=auto,format=yuv420p" -c:a copy -y output2.mp4
+
+# 2 lines
+# separate drawtexts with comma (,), then overlay
+ffmpeg -i webcam.mp4 -filter_complex "drawtext=text='Max Rottersman':fontsize=80:y=h*.8:x=min(1*(((t-3))*100)\,100):box=1:boxcolor=gray:boxborderw=10:alpha=.8:enable='between(t,3,20)',drawtext=text='Maxotics':fontsize=40:y=h*.92:x=min(1*((t-3)*100)\,100):box=1:boxcolor=gray:boxborderw=8:alpha=.7:enable='between(t,3,20)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p" -y output2.mp4
+
+# Add OPEN TITLE TO LOWER THIRDS
+
+# TITLE PART
+drawtext=text="Max Rottersman":fontsize=80:y=(h-text_h)/2:x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.8:x=min(1*(((t-5))*100)\,100):enable='between(t,2,5)'
+
+# WORKS TITLE PLUS LOWER THIRDS
+ffmpeg -i webcam.mp4 -filter_complex "drawtext=text='Max Rottersman':fontsize=80:y=h*.8:x=min(1*(((t-5))*100)\,100):box=1:boxcolor=gray:boxborderw=10:alpha=.8:enable='between(t,5,20)',drawtext=text='Maxotics':fontsize=40:y=h*.92:x=min(1*((t-5)*100)\,100):box=1:boxcolor=gray:boxborderw=8:alpha=.7:enable='between(t,5,20)',drawtext=text='Max Rottersman':fontsize=120:y=(h-text_h)/2:x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min(1*(((t))*100)\,100):enable='between(t,0,5)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p" -y output3.mp4
+
+# BREAK DOWN
+ffmpeg -i webcam.mp4 -filter_complex "drawtext=text='Max Rottersman':fontsize=80:y=h*.8:x=min(1*(((t-5))*100)\,100):box=1:boxcolor=gray:boxborderw=10:alpha=.8:enable='between(t,5,20)',
+
+drawtext=text='Maxotics':fontsize=40:y=h*.92:x=min(1*((t-5)*100)\,100):box=1:boxcolor=gray:boxborderw=8:alpha=.7:enable='between(t,5,20)'[t1],
+
+drawtext=text="Max Rottersman":fontsize=80:y=(h-text_h)/2:x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.8:x=min(1*(((t-5))*100)\,100):enable='between(t,2,5)'
+
+;[0:v][t1]overlay=format=auto,format=yuv420p" -y output3.mp4
+
+
+****************** misc
+ffmpeg -i webcam.mp4 -filter_complex "drawtext=text='Max Rottersman':fontsize=80:st=3:y=h*.8:x=min(1*((t)*100)\,100):box=1:boxcolor=gray:boxborderw=10:alpha=.8[fg];[0][fg]overlay=format=auto,format=yuv420p" -c:a copy -y output2.mp4
+
+drawtext=text="Maxotics":fontsize=40:enable='between(t,5,20):y=h*.92:x=min(1*(t*100)\,100):box=1:boxcolor=gray:boxborderw=8:alpha=.7
+
+COPY/PASTE
+
+ffmpeg -i webcam.mp4 -filter_complex "drawtext=text='Max Title':fontsize=120:y=(h-text_h)/2:x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min(1*(((t-3))*100)\,100):enable='0,3',drawtext=text='Max Rottersman':fontsize=80:y=h*.8:x=min(1*(((t-5))*100)\,100):box=1:boxcolor=gray:boxborderw=10:alpha=.8:enable='between(t,4,9',drawtext=text='Maxotics':fontsize=40:y=h*.92:x=min(1*((t-0)*100)\,100):box=1:boxcolor=gray:boxborderw=8:alpha=.7:enable='between(t,4,9'[t1];[0:v][t1]overlay=format=auto,format=yuv420p" -y output4.mp4
+
+ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -t 30 -filter_complex "drawtext=text='Add Titles!':fontsize=120:y=(h-text_h)/2:x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min(4*(((t-7))*100)\,100):enable='between(t,0,7)',drawtext=text='Max Rottersman':fontsize=80:y=h*.8:x=min(1*(((t-6))*100)\,100):box=1:boxcolor=gray:boxborderw=10:alpha=.8:enable='between(t,9,15)',drawtext=text='Maxotics':fontsize=40:y=h*.92:x=min(1*((t-0)*100)\,100):box=1:boxcolor=gray:boxborderw=8:alpha=.7:enable='between(t,9,15)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p" -f mkv -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -
+
+*** THIS WORKS IN COMMAND, NOT POWERSHELL
+ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex "drawtext=text='Add Titles!':fontsize=120:y=(h-text_h)/2:x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min(4*(((t-7))*100)\,100):enable='between(t,0,7)',drawtext=text='Max Rottersman':fontsize=80:y=h*.8:x=min(1*(((t-6))*100)\,100):box=1:boxcolor=gray:boxborderw=10:alpha=.8:enable='between(t,9,15)',drawtext=text='Maxotics':fontsize=40:y=h*.92:x=min(1*((t-0)*100)\,100):box=1:boxcolor=gray:boxborderw=8:alpha=.7:enable='between(t,9,15)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p" -f mkv -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -
+
+"Works with quotes
+ cmd /s /c --% "ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -f mkv -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -"
+
+* WORKS IN POWERSHELL
+cmd /s /c --% "ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex ^"drawtext=text='Add Titles!':fontsize=120:y=(h-text_h)/2:x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min(4*(((t-7))*100)\,100):enable='between(t,0,7)',drawtext=text='Max Rottersman':fontsize=80:y=h*.8:x=min(1*(((t-6))*100)\,100):box=1:boxcolor=gray:boxborderw=10:alpha=.8:enable='between(t,9,15)',drawtext=text='Maxotics':fontsize=40:y=h*.92:x=min(1*((t-0)*100)\,100):box=1:boxcolor=gray:boxborderw=8:alpha=.7:enable='between(t,9,15)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p^" -f mkv -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay - "
+
+* DOESN"T WORK
+
+
+
+MISC POWERSHELL
+ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -vcodec libx264 -f matroska pipe:1|ffplay -i pipe:0
+| tee >(ffplay -) | ffplay -
+pipe:1|ffplay -i pipe:0
+

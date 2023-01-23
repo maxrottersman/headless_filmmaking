@@ -73,18 +73,11 @@ ffmpeg -f gdigrab -show_region 1 -framerate 30 -video_size 1920x1080 -offset_x 1
 
 ```
 \ = escape special character in ffmpeg
-We may define x and y properties as a math expression and FFmpeg provides variables like:
+
+We may define x and y properties as a math expression and FFmpeg provides variables like (filtergraph timeline):
+
 - w , h— width/height of input video;
 - tw , th —width/height of the rendered text
-
--f lavfi (virtual color video stream)
-
-ffmpeg -f lavfi -i color=color=red -t 30 red.mp4
-                     ^     ^    ^
-                     |     |    |
-                   filter key value
-                   
-filtergraph timeline
 
 ‘t’
 timestamp expressed in seconds, NAN if the input timestamp is unknown
@@ -95,8 +88,15 @@ sequential number of the input frame, starting from 0
 ‘pos’
 the position in the file of the input frame, NAN if unknown
 
-‘w’
-‘h’
+Timeline, enable effect at 3 seconds and end at 20 seconds
+enable='between(t,3,20)
+
+-f lavfi (virtual color video stream)
+
+ffmpeg -f lavfi -i color=color=red -t 30 red.mp4
+                     ^     ^    ^
+                     |     |    |
+                   filter key value
 ```
 
 ## ffplay (learning, use ffmpeg to save to file)
@@ -112,6 +112,28 @@ play with text
 ```
 ffplay -f lavfi -i color=color=blue -vf scale=1280x720,fps=20,drawtext=text=Max:fontsize=80
 ```
+
+### Powershell
+
+Trick to pipe a command from a Powershell script (or from a PS command prompt) when it doesn't work as expected (these are rare cases probably).  In this case, I need to pipe ffmpeg to ffplay. 
+
+1. Send the whole command with pipe (|) to CMD.exe using "CMD /S /C --%" 
+2. Wrap whole thing in double quotes (the /S will strip them when piping) 
+3. Use a caret (^) in front of any double-quotes within the ffmpeg arguments, around -filter_complex, for example. EXAMPLE: WILL WORK IN CMD BUT NOT PS:v ffmpeg -f lavfi -i color=c=black:s=1920x1080:r=30 -filter_complex "drawtext=text='Hello!':fontfile='C\:\\Windows\\Fonts\\arial.ttf':fontsize=120:y=((h-text_h)/2)-(text_h):x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min((t-0)*120\,(w-text_w)/2):enable='between(t,0,7)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p "  -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -  
+
+This WILL work in PS: cmd /s /c --% "ffmpeg -f lavfi -i color=c=black:s=1920x1080:r=30 -filter_complex ^"drawtext=text='Hello!':fontfile='C\:\\Windows\\Fonts\\arial.ttf':fontsize=120:y=((h-text_h)/2)-(text_h):x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min((t-0)*120\,(w-text_w)/2):enable='between(t,0,7)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p ^"  -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -  "
+
+```
+# For testing 
+$ffplay_start = "cmd /s /c --% `"ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex  ^`""
+$ffplay_end = "[t1];[0:v][t1]overlay=format=auto,format=yuv420p ^`"  -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -  `""
+
+# For production
+$ffmpeg_start = "ffmpeg -i `$(`$Filename_Input) -filter_complex `""
+$ffmpeg_end = "[t1];[0:v][t1]overlay=format=auto,format=yuv420p`" -y output_titlesadded.mp4"
+```
+
+
 
 ## Motion Graphics
 
@@ -178,6 +200,27 @@ More info about lt=less than, lte3 = less than or equal, and the enable stuff he
 ```
 ffplay -f lavfi -i color=color=blue -vf scale=1280x720,fps=20,drawtext=text="Max Was Here!":fontsize=80:x=50:y=50,drawtext=text="Max Was Here Too!":fontsize=60:x=50:y=150
 ```
+
+### Scroll Up Text From File Overlay Short
+
+```
+LARGE SCROLLING TEXT FOR SHORTS
+
+* WORKING 
+* y=(h-100*(t/3))-(h/3)
+* or start with height 'y' - 100 pixels, then multiple by time factor for movement
+* - MINUS the height factor, where up the screen the scrolling text starts from (h/3 = 1/3d up screen)
+
+* TESTING
+
+ffmpeg -f lavfi -i color=c=black:s=1080x1920:r=30 -filter_complex  "[0]split[txt][orig];[txt]drawtext=fontfile=tahoma.ttf:fontsize=80:fontcolor=green:x=100:y=(h-100*(t/2))-(h/2):textfile=Scroll.txt:bordercolor=white:borderw=3[txt];[orig]crop=iw:50:0:0[orig];[txt][orig]overlay" -c:v  libx264 -c:v h264 -f matroska - | ffplay -
+
+* PRODUCTION
+
+ffmpeg -i NYT_scroll.mp4 -filter_complex  "[0]split[txt][orig];[txt]drawtext=fontfile=tahoma.ttf:fontsize=80:fontcolor=green:x=100:y=(h-100*(t/2))-(h/2):textfile=Scroll.txt:bordercolor=white:borderw=3[txt];[orig]crop=iw:50:0:0[orig];[txt][orig]overlay" -c:v  libx264 -y NYT_scroll_with_text_scrolling.mp4
+```
+
+
 
 ## Other Cookbooks
 
