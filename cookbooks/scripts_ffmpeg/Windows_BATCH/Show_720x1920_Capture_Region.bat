@@ -1,0 +1,1 @@
+ffmpeg -f gdigrab -show_region 1 -video_size 720x1280 -offset_x 2400 -offset_y 500 -i desktop -c:v libx264 -f null -

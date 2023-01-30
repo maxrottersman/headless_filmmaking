@@ -1,0 +1,8 @@
+# this isn't working, or erroring out, no idea why
+fmpeg -list_devices true -f dshow -i dummy > mydevices.txt
+
+# want to record desktop, something like this
+ffmpeg -f dshow -i audio="Stereo Mix (Realtek Audio)" C:\Users\fatiw\Desktop\Audio\output.mp3
+
+# Normalize audio
+ffmpeg -i webcam.mp4 -filter:a loudnorm webcam_normalized.mp4

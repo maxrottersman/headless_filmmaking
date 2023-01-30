@@ -1,0 +1,19 @@
+
+
+* SIMPLE MOVE TO RIGHT 
+* X = T and Y = h/2
+ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex "drawtext=text='t= %{pts\:hms}  n=%{frame_num} (t=x and y=h/2)':fontsize=30:fontcolor=white:x=t:y=h/2:enable='between(t,0,50)'[t1];[0:v][t1]overlay=format=auto" -f matroska - | ffplay -   
+
+* FASTER MOVEMENT x*4
+ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex "drawtext=text='t= %{pts\:hms}  n=%{frame_num} (t=x*10 and y=h/2)':fontsize=30:fontcolor=white:x=t*10:y=h/2:enable='between(t,0,50)'[t1];[0:v][t1]overlay=format=auto" -f matroska - | ffplay -   
+
+* MOVE USING N (frame_num)
+ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex "drawtext=text='t= %{pts\:hms}  n=%{frame_num} (x=n and y=h/2)':fontsize=30:fontcolor=white:x=n:y=h/2:enable='between(t,0,50)'[t1];[0:v][t1]overlay=format=auto" -f matroska - | ffplay -   
+
+* WORKS
+ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex "drawtext=text='n=%{frame_num}':fontsize=120:fontcolor=white:x=t:y=t:enable='between(t,0,50)'[t1];[0:v][t1]overlay=format=auto" -f matroska - | ffplay -   
+
+ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex "drawtext=text='%{pts\:hms}':fontsize=120:fontcolor=white:x=t*4:y=t*4:enable='between(t,0,50)'[t1];[0:v][t1]overlay=format=auto" -f matroska - | ffplay -   
+
+ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex "drawtext=text='t= %{pts\:hms}  n=%{frame_num}':fontsize=60:fontcolor=white:x=t*4:y=t*4:enable='between(t,0,50)'[t1];[0:v][t1]overlay=format=auto" -f matroska - | ffplay -   
+

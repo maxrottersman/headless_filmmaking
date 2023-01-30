@@ -16,6 +16,16 @@ To write those devices to a text file
 ffmpeg -list_devices true -f dshow -i dummy > my_devices_for_ffmpeg.txt
 ```
 
+### Audio
+
+Normalize
+
+```
+ffmpeg -i webcam.mp4 -filter:a loudnorm webcam_normalized.mp4
+```
+
+
+
 ## Overlaying
 
 When overlaying, the 2nd linkname, here [1:v] is layered OVER the first, [0:v]
@@ -220,8 +230,28 @@ ffmpeg -f lavfi -i color=c=black:s=1080x1920:r=30 -filter_complex  "[0]split[txt
 ffmpeg -i NYT_scroll.mp4 -filter_complex  "[0]split[txt][orig];[txt]drawtext=fontfile=tahoma.ttf:fontsize=80:fontcolor=green:x=100:y=(h-100*(t/2))-(h/2):textfile=Scroll.txt:bordercolor=white:borderw=3[txt];[orig]crop=iw:50:0:0[orig];[txt][orig]overlay" -c:v  libx264 -y NYT_scroll_with_text_scrolling.mp4
 ```
 
+### Portrait "Shorts"
+
+This is the "Old TV" effect.  I put my webcam in portrait mode and it rotates it using "transpose=2"
+
+```
+ffmpeg -f dshow -rtbufsize 2G -s 1280x720 -i video="Elgato Facecam":audio="In 1-2 (MOTU M Series)" -vf [in]eq=brightness=0.1,eq=contrast=1.5:saturation=1[eq];[eq]drawbox=t=20,drawgrid=w=20,boxblur=3:1,lenscorrection=k1=0.1[out];[out]transpose=2[out2] -c:v h264_nvenc -b:v 0 -maxrate:v 300000K -c:a aac -b:a 128k -y webcam.mp4
+```
+
+### Speed Up
+
+```
+ffmpeg -i maxrant.mp4 -crf 30 -filter_complex "[0:v]setpts=.8*PTS[v];[0:a]atempo=1.25[a]" -map "[v]" -map "[a]" -y maxrant_spedup25.mp4
+
+x = speedup
+So audio, say 1.20
+then 1/1.20 = .8
+```
+
 
 
 ## Other Cookbooks
 
 [steven2358](https://gist.github.com/steven2358/ba153c642fe2bb1e47485962df07c730)
+
+[Useful ffmpeg commands by: Amit Agarwal](https://www.labnol.org/internet/useful-ffmpeg-commands/28490/)
