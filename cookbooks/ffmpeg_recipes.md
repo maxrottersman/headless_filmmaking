@@ -1,8 +1,10 @@
 # ffmpeg Recipes
 
-Max Rottersman (Maxotics) Collection
+Max Rottersman (Maxotics) Collection.  Links to those I learned from at bottom.
 
 *Some of these are "dirty" or not generic.*
+
+### Webcam and Microphones
 
 Get list of devices on a Windows PC, like webcams and microphones
 
@@ -16,6 +18,14 @@ To write those devices to a text file
 ffmpeg -list_devices true -f dshow -i dummy > my_devices_for_ffmpeg.txt
 ```
 
+### Webcam Portrait "Shorts"
+
+This is the "Old TV" effect.  I put my webcam in portrait mode and it rotates it using "transpose=2"
+
+```
+ffmpeg -f dshow -rtbufsize 2G -s 1280x720 -i video="Elgato Facecam":audio="In 1-2 (MOTU M Series)" -vf [in]eq=brightness=0.1,eq=contrast=1.5:saturation=1[eq];[eq]drawbox=t=20,drawgrid=w=20,boxblur=3:1,lenscorrection=k1=0.1[out];[out]transpose=2[out2] -c:v h264_nvenc -b:v 0 -maxrate:v 300000K -c:a aac -b:a 128k -y webcam.mp4
+```
+
 ### Audio
 
 Normalize
@@ -23,8 +33,6 @@ Normalize
 ```
 ffmpeg -i webcam.mp4 -filter:a loudnorm webcam_normalized.mp4
 ```
-
-
 
 ## Overlaying
 
@@ -34,9 +42,13 @@ When overlaying, the 2nd linkname, here [1:v] is layered OVER the first, [0:v]
 ffmpeg -i mybackground.mp4 -c:v libvpx-vp9 -i what_I_want_to_overlay.webm -filter_complex "[0:v][1:v]overlay=y=800" -map 0:a final_short.mp4
 ```
 
-
-
 ## For Editing
+
+Concat files
+
+```
+ffmpeg -f concat -safe 0 -i files.txt -c copy -y final_output.mp4
+```
 
 Add timecode as a text box onto a video
 
@@ -50,33 +62,20 @@ Cut video to 1 minute, for example
 ffmpeg -i myvid.webm -ss 00:00:01 -to 00:01:01 -c:v copy -c:a copy myvid_1min.webm
 ```
 
-
-
-## CODECS
-
-#### ProRes
+### Resize and Frame Rate
 
 ```
--c:v prores_ks -profile:v 3 -vendor apl0 -bits_per_mb 8000 -pix_fmt yuv422p10le 
-
-0 ............ ........................ProRes 422, Proxy
-1 ............ ........................ProRes 422, LT
-2 .................................... ProRes 422, Standard
-3 ........... .........................ProRes 422, HQ
+ffmpeg -i myfile.mp4 -vf "fps=30,scale=720:1280" -c:v  libx264 -c:a aac -b:a 128k -y "vid_720_30fps.mp4"
 ```
 
-## NVENC
-
-Ignore profiles and presets. The higher the bitrate, the better the quality.  It will say what while capturing
+### Speed Up
 
 ```
-ffmpeg -f dshow -rtbufsize 2G -i video="Elgato Facecam":audio="In 1-2 (MOTU M Series)" -c:v h264_nvenc -b:v 0 -maxrate:v 300000K -c:a aac -b:a 128k -y webcam2nvenc.mp4
-```
+ffmpeg -i maxrant.mp4 -crf 30 -filter_complex "[0:v]setpts=.8*PTS[v];[0:a]atempo=1.25[a]" -map "[v]" -map "[a]" -y maxrant_spedup25.mp4
 
-For screen grabbing
-
-```
-ffmpeg -f gdigrab -show_region 1 -framerate 30 -video_size 1920x1080 -offset_x 100 -offset_y 100 -i desktop -c:v h264_nvenc -b:v 0 -maxrate:v 1M -bufsize:v 1M -y my screencap.mp4
+x = speedup
+So audio, say 1.20
+then 1/1.20 = .8
 ```
 
 ## Constants / Properties
@@ -109,7 +108,7 @@ ffmpeg -f lavfi -i color=color=red -t 30 red.mp4
                    filter key value
 ```
 
-## ffplay (learning, use ffmpeg to save to file)
+## ffplay (learn basics or play video)
 
 play a blue background
 
@@ -122,28 +121,6 @@ play with text
 ```
 ffplay -f lavfi -i color=color=blue -vf scale=1280x720,fps=20,drawtext=text=Max:fontsize=80
 ```
-
-### Powershell
-
-Trick to pipe a command from a Powershell script (or from a PS command prompt) when it doesn't work as expected (these are rare cases probably).  In this case, I need to pipe ffmpeg to ffplay. 
-
-1. Send the whole command with pipe (|) to CMD.exe using "CMD /S /C --%" 
-2. Wrap whole thing in double quotes (the /S will strip them when piping) 
-3. Use a caret (^) in front of any double-quotes within the ffmpeg arguments, around -filter_complex, for example. EXAMPLE: WILL WORK IN CMD BUT NOT PS:v ffmpeg -f lavfi -i color=c=black:s=1920x1080:r=30 -filter_complex "drawtext=text='Hello!':fontfile='C\:\\Windows\\Fonts\\arial.ttf':fontsize=120:y=((h-text_h)/2)-(text_h):x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min((t-0)*120\,(w-text_w)/2):enable='between(t,0,7)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p "  -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -  
-
-This WILL work in PS: cmd /s /c --% "ffmpeg -f lavfi -i color=c=black:s=1920x1080:r=30 -filter_complex ^"drawtext=text='Hello!':fontfile='C\:\\Windows\\Fonts\\arial.ttf':fontsize=120:y=((h-text_h)/2)-(text_h):x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min((t-0)*120\,(w-text_w)/2):enable='between(t,0,7)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p ^"  -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -  "
-
-```
-# For testing 
-$ffplay_start = "cmd /s /c --% `"ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex  ^`""
-$ffplay_end = "[t1];[0:v][t1]overlay=format=auto,format=yuv420p ^`"  -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -  `""
-
-# For production
-$ffmpeg_start = "ffmpeg -i `$(`$Filename_Input) -filter_complex `""
-$ffmpeg_end = "[t1];[0:v][t1]overlay=format=auto,format=yuv420p`" -y output_titlesadded.mp4"
-```
-
-
 
 ## Motion Graphics
 
@@ -230,28 +207,64 @@ ffmpeg -f lavfi -i color=c=black:s=1080x1920:r=30 -filter_complex  "[0]split[txt
 ffmpeg -i NYT_scroll.mp4 -filter_complex  "[0]split[txt][orig];[txt]drawtext=fontfile=tahoma.ttf:fontsize=80:fontcolor=green:x=100:y=(h-100*(t/2))-(h/2):textfile=Scroll.txt:bordercolor=white:borderw=3[txt];[orig]crop=iw:50:0:0[orig];[txt][orig]overlay" -c:v  libx264 -y NYT_scroll_with_text_scrolling.mp4
 ```
 
-### Portrait "Shorts"
+## CODECS
 
-This is the "Old TV" effect.  I put my webcam in portrait mode and it rotates it using "transpose=2"
-
-```
-ffmpeg -f dshow -rtbufsize 2G -s 1280x720 -i video="Elgato Facecam":audio="In 1-2 (MOTU M Series)" -vf [in]eq=brightness=0.1,eq=contrast=1.5:saturation=1[eq];[eq]drawbox=t=20,drawgrid=w=20,boxblur=3:1,lenscorrection=k1=0.1[out];[out]transpose=2[out2] -c:v h264_nvenc -b:v 0 -maxrate:v 300000K -c:a aac -b:a 128k -y webcam.mp4
-```
-
-### Speed Up
+#### ProRes
 
 ```
-ffmpeg -i maxrant.mp4 -crf 30 -filter_complex "[0:v]setpts=.8*PTS[v];[0:a]atempo=1.25[a]" -map "[v]" -map "[a]" -y maxrant_spedup25.mp4
+-c:v prores_ks -profile:v 3 -vendor apl0 -bits_per_mb 8000 -pix_fmt yuv422p10le 
 
-x = speedup
-So audio, say 1.20
-then 1/1.20 = .8
+0 ............ ........................ProRes 422, Proxy
+1 ............ ........................ProRes 422, LT
+2 .................................... ProRes 422, Standard
+3 ........... .........................ProRes 422, HQ
 ```
 
+## NVENC
 
+Ignore profiles and presets. The higher the bitrate, the better the quality.  It will say what while capturing
+
+```
+ffmpeg -f dshow -rtbufsize 2G -i video="Elgato Facecam":audio="In 1-2 (MOTU M Series)" -c:v h264_nvenc -b:v 0 -maxrate:v 300000K -c:a aac -b:a 128k -y webcam2nvenc.mp4
+```
+
+For screen grabbing
+
+```
+ffmpeg -f gdigrab -show_region 1 -framerate 30 -video_size 1920x1080 -offset_x 100 -offset_y 100 -i desktop -c:v h264_nvenc -b:v 0 -maxrate:v 1M -bufsize:v 1M -y my screencap.mp4
+```
+
+### Windows PowerShell
+
+Trick to pipe a command from a Powershell script (or from a PS command prompt) when it doesn't work as expected (these are rare cases probably).  In this case, I need to pipe ffmpeg to ffplay. 
+
+1. Send the whole command with pipe (|) to CMD.exe using "CMD /S /C --%" 
+2. Wrap whole thing in double quotes (the /S will strip them when piping) 
+3. Use a caret (^) in front of any double-quotes within the ffmpeg arguments, around -filter_complex, for example. EXAMPLE: WILL WORK IN CMD BUT NOT PS:v ffmpeg -f lavfi -i color=c=black:s=1920x1080:r=30 -filter_complex "drawtext=text='Hello!':fontfile='C\:\\Windows\\Fonts\\arial.ttf':fontsize=120:y=((h-text_h)/2)-(text_h):x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min((t-0)*120\,(w-text_w)/2):enable='between(t,0,7)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p "  -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -  
+
+This WILL work in PS: cmd /s /c --% "ffmpeg -f lavfi -i color=c=black:s=1920x1080:r=30 -filter_complex ^"drawtext=text='Hello!':fontfile='C\:\\Windows\\Fonts\\arial.ttf':fontsize=120:y=((h-text_h)/2)-(text_h):x=(w-text_w)/2:box=1:boxcolor=gray:boxborderw=10:alpha=.9:y=h*.5:x=min((t-0)*120\,(w-text_w)/2):enable='between(t,0,7)'[t1];[0:v][t1]overlay=format=auto,format=yuv420p ^"  -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -  "
+
+```
+# For testing 
+$ffplay_start = "cmd /s /c --% `"ffmpeg -f lavfi -i color=c=black:s=1280x720:r=30 -filter_complex  ^`""
+$ffplay_end = "[t1];[0:v][t1]overlay=format=auto,format=yuv420p ^`"  -c:v h264 -profile:v baseline -pix_fmt yuv420p -preset ultrafast -tune zerolatency -crf 28 -g 60 -f matroska - | ffplay -  `""
+
+# For production
+$ffmpeg_start = "ffmpeg -i `$(`$Filename_Input) -filter_complex `""
+$ffmpeg_end = "[t1];[0:v][t1]overlay=format=auto,format=yuv420p`" -y output_titlesadded.mp4"
+```
+
+### ffmpeg Gods
+
+[Gyan Doshi](https://superuser.com/users/114058/gyan)  He publishes lateset ffmpeg builds too.  [gyan.dev](https://www.gyan.dev/ffmpeg/)
+
+### YouTube
+
+My fav: [ffmpeg Guy](https://www.youtube.com/@theFFMPEGguy)
 
 ## Other Cookbooks
 
 [steven2358](https://gist.github.com/steven2358/ba153c642fe2bb1e47485962df07c730)
 
 [Useful ffmpeg commands by: Amit Agarwal](https://www.labnol.org/internet/useful-ffmpeg-commands/28490/)
+
