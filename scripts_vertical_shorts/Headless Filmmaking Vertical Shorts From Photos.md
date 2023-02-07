@@ -1,5 +1,7 @@
 # Headless Filmmaking: Vertical Shorts From Photos
 
+THESE SCRIPTS HAVE BEEN UPDATED 2/6/23 BUT THE IDEA HERE REMAINS THE SAME
+
 First, we want to take our photos and set their height to the height of our vertical video (shorts); that is, 1920 in most cases
 
 View: [Sample short created](https://youtube.com/shorts/B_dL4saQyUg?feature=share)

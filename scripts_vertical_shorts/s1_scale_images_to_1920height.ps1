@@ -4,7 +4,8 @@
 #
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 
-$files = Get-ChildItem ".\*.jpg"
+$files = Get-ChildItem ".\jpgs\*.jpg"
+$files_folder = "jpgs\"
 $filenumber = 1
 	
 	ForEach ($file in $files){
@@ -15,7 +16,7 @@ $filenumber = 1
 	
 		if ($file.Name.Length -gt 5) # we don't want to operate on our short number files
 		{
-		$cmd = "magick $( $file) -resize x1920  $($scriptPath)\$( $filenumber).jpg"
+		$cmd = "magick $( $file) -resize x1920  $($scriptPath)\$files_folder$( $filenumber).jpg"
 		
 		Write-host  $cmd
 		$filenumber += 1
