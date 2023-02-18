@@ -19,8 +19,11 @@ $output_videos = "output_videos\"
 	#$frames = ([int]$lengthseconds * 30)
 	
 	Write-host $filenumber
+	# Slow Fade in, Slow Fade after 6 seconds
+	#$cmd = "ffmpeg -i $Folder_BackgroundVideos$($filenumber)panned.mkv -loop 1 -i $caption_folder$($filenumber)caption.png -filter_complex `"[1:0] format=rgba,fade=in:st=0:d=3:alpha=1,fade=out:st=6:d=3:alpha=1 [ovr];[0:0][ovr] overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2`" -t $($lengthseconds) -y $Folder_Output_Videos$($filenumber)addedcaption.mkv"
 	
-	$cmd = "ffmpeg -i $Folder_BackgroundVideos$($filenumber)panned.mkv -loop 1 -i $caption_folder$($filenumber)caption.png -filter_complex `"[1:0] format=rgba,fade=in:st=0:d=3:alpha=1,fade=out:st=6:d=3:alpha=1 [ovr];[0:0][ovr] overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2`" -t $($lengthseconds) -y $Folder_Output_Videos$($filenumber)addedcaption.mkv"
+	#Fast Fade In, NO FADE OUT
+	$cmd = "ffmpeg -i $Folder_BackgroundVideos$($filenumber)panned.mkv -loop 1 -i $caption_folder$($filenumber)caption.png -filter_complex `"[1:0] format=rgba,fade=in:st=0:d=2:alpha=1:alpha=1 [ovr];[0:0][ovr] overlay=(main_w-overlay_w)/2:(main_h-overlay_h)/2`" -t $($lengthseconds) -y $Folder_Output_Videos$($filenumber)addedcaption.mkv"
 
 	Write-host  $cmd
 	Invoke-Expression $cmd
