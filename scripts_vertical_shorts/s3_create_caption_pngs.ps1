@@ -25,7 +25,7 @@ $CapHeight = [math]::Round([int]$ProjectHeight *[decimal]$CaptionSizeAdjustment)
 # 
 $captions = Import-Csv .\captions.txt -delimiter "|"
 # An array of random colors for variety
-$IMcolors = @("white","snow2","MediumOrchid1","SlateGray1","cyan1","coral","LightSlateBlue","goldenrod1","LawnGreen","DeepSkyBlue1","magenta4","white","snow2")
+$IMcolors = @("white","snow2","MediumOrchid1","SlateGray1","cyan1","coral","LightSlateBlue","goldenrod1","LawnGreen","DeepSkyBlue1","magenta4","white","snow2","LawnGreen","DeepSkyBlue1","magenta4","white")
 $idx = 1
 
 # IF WANT ROUNDED BOX AROUND ALL
