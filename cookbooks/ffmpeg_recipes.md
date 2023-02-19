@@ -34,6 +34,20 @@ Normalize
 ffmpeg -i webcam.mp4 -filter:a loudnorm webcam_normalized.mp4
 ```
 
+Get length of video (> tempvideolength.txt at end to write to file)
+
+```
+ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.mp4
+```
+
+Cut and fade out audio
+
+```
+ ffmpeg -i source.mp3 -ss 00:00:00 -t 00:00:56 -filter_complex "afade=type=out:duration=5:start_time=51" source_fade_and_cut.wav
+```
+
+
+
 ## Overlaying
 
 When overlaying, the 2nd linkname, here [1:v] is layered OVER the first, [0:v]
