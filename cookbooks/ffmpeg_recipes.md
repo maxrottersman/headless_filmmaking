@@ -18,7 +18,37 @@ To write those devices to a text file
 ffmpeg -list_devices true -f dshow -i dummy > my_devices_for_ffmpeg.txt
 ```
 
-### Webcam Portrait "Shorts"
+### Portrait "Shorts"
+
+If I want to place a video (footage or webcam), shrunk by 40pix on each side, slightly up from center (600px), over a 1080x1920 png file (pg.png).  
+
+```
+ffmpeg -i input.mp4 -i bg.png -filter_complex "[0:v]scale=1000:528[vid];[1:v][vid]overlay=40:600[out]" -map 0:a -map [out] -y output_portrait.mp4
+```
+
+If want to add captions I'm using [Microsoft Azure Speech to Text Service](https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/index-speech-to-text) to generate them from the command line (takes some setting up). 
+
+```
+spx recognize --file input.mp4 --format any --output srt file captions.srt
+```
+
+I then convert the srt to ass file so I can change the text formatting using [AEGISUB software](https://aegisite.vercel.app/)
+
+```
+ffmpeg -i captions.srt captions.ass
+```
+
+I then add the subtitle to the video:
+
+```
+ ffmpeg -i output_portrait.mp4 -vf ass=captions.ass -y output_portrait_captioned.mp4
+```
+
+If I want to do webcam/vide over a blurred copy of itself in portrait I can use:
+
+```
+ffmpeg -i webcam.mp4 -filter_complex "[0:v]boxblur=40,scale=1080x1920,setsar=1[bg];[0:v]scale=1080:1920:force_original_aspect_ratio=decrease[fg];[bg][fg]overlay=y=(H-h)/2" -c:a copy webcam_port.mp4
+```
 
 This is the "Old TV" effect.  I put my webcam in portrait mode and it rotates it using "transpose=2"
 
@@ -45,8 +75,6 @@ Cut and fade out audio
 ```
  ffmpeg -i source.mp3 -ss 00:00:00 -t 00:00:56 -filter_complex "afade=type=out:duration=5:start_time=51" source_fade_and_cut.wav
 ```
-
-
 
 ## Overlaying
 
