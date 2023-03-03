@@ -1,6 +1,10 @@
 # Headless Filmmaking
 **Tools** to work with video/audio using headless tools like ffmpeg.  These all work, but far from robust.  
 
+Most current dev in \scripts_vertical_shorts
+
+Most ffmpeg snippets in \cookbooks
+
 ***IN DEVELOPMENT!*** Using ffmpeg builds from [Gyan.dev](https://www.gyan.dev/ffmpeg/builds/) (I want latest HVENC (GPU) libraries)
 
 You need [AutoHotKey](https://www.autohotkey.com/) (version 1.1 -- NOT version 2) installed for these scripts to work.

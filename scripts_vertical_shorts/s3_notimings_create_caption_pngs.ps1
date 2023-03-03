@@ -19,9 +19,7 @@ $CapHeight = [math]::Round([int]$ProjectHeight *[decimal]$CaptionSizeAdjustment)
 # colors snow2, 
 #
 # captions.txt (example)
-# filenumber|captiontext
-# 1|Let's Make An Analogy For the Ukraine War
-# 2|Putin Parked Thousands of Ladas In Ukraine...
+# Let's Make An Analogy For the Ukraine War
 # 
 $captions = Import-Csv $Folder_Captions\captions.txt -delimiter "|"
 # An array of random colors for variety
@@ -32,18 +30,18 @@ $idx = 1
 #magick -size 300x300 -background none -gravity center xc:none -fill "#00000080" -draw "roundrectangle 0,0 299,299 15,15" -fill white caption:"This is the time for all good men to come to the aid of their country" -composite rounded_corners.png
 
 	ForEach ($caption in $captions){
-	$filenumber = $($caption.FILENUMBER)
+	#$filenumber = $($caption.FILENUMBER)
 	#$lengthseconds = $($caption.LENGTHSECONDS)
 	$captiontext = $($caption.CAPTIONTEXT)
 
-	Write-host $filenumber $captiontext
+	Write-host $captiontext
 
 	# BLOCK STYLE
 	#$cmd = "magick -size 800x1600 -background none -font Open-Sans-Bold -strokewidth 2  -stroke " + $IMcolors[$idx] + "   -undercolor " + $IMcolors[$idx] + " -gravity center `"caption: $( $captiontext)\ `"  $( $filenumber)caption.png"
 	
 	# ROUNDED CORNERS STYLE (doesn't work top box, not perfect
 	# 80% of 1080x1920 = 864x1536, 70% 756x1344
-	$cmd = "magick -size $($CapWidth)x$($CapHeight) -background none -font Open-Sans-Bold -strokewidth 2  -stroke " + $($IMcolors[$idx]) + "   -undercolor " + $($IMcolors[$idx]) + " -gravity center `"caption: $( $captiontext)\ `" ``( `+clone -morphology dilate disk:12 ``) `+swap -composite $Folder_Captions$( $filenumber)caption.png"
+	$cmd = "magick -size $($CapWidth)x$($CapHeight) -background none -font Open-Sans-Bold -strokewidth 2  -stroke " + $($IMcolors[$idx]) + "   -undercolor " + $($IMcolors[$idx]) + " -gravity center `"caption: $( $captiontext)\ `" ``( `+clone -morphology dilate disk:12 ``) `+swap -composite $Folder_Captions$($idx)caption.png"
 
 #
 	Write-host  $cmd
