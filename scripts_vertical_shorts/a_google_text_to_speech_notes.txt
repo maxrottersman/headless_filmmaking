@@ -1,0 +1,5 @@
+
+Set env in powershell before calling
+
+PC will need gcloud cli installed.  
+ $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Max_Software\google_api_key\secdb-263122-f8422e9388df.json"

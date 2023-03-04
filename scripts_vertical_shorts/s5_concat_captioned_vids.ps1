@@ -4,6 +4,8 @@ $PSDefaultParameterValues = @{ 'out-file:encoding' = 'ascii' }
 Get-Content ".\settings.ini" | foreach-object -begin {$h=@{}} -process { $k = [regex]::split($_,'='); if(($k[0].CompareTo("") -ne 0)-and ($k[0].StartsWith("[") -ne $True)) { $h.Add($k[0], $k[1]) } }
 
 $Folder_Output_Videos = $h.Get_Item("Folder_Output_Videos")
+$Folder_Captions = $h.Get_Item("Folder_Captions")
+$File_Captions_Timings = $h.Get_Item("File_Captions_Timings").Trim()
 $Output_Video = $h.Get_Item("Output_Video")
 
 # delete current file list and output vid
@@ -17,8 +19,7 @@ if (Test-Path .\$OutputFileName) {
 
 # create our file list of videos for concatenation
 $FileName = "files.txt"
-$captions = Import-Csv .\captions.txt -delimiter "|"
-
+$captions = Import-Csv $Folder_Captions$File_Captions_Timings -delimiter "|"
 #
 # First write text file with filenames for ffmpeg to concat
 #
@@ -27,7 +28,7 @@ $captions = Import-Csv .\captions.txt -delimiter "|"
 	
 	Write-host $filenumber
 	
-	echo "file `'$Folder_Output_Videos$($filenumber)addedcaption.mkv`'" >> .\$FileName
+	echo "file `'$Folder_Output_Videos$($filenumber)addedcaption.mp4`'" >> .\$FileName
 	
 	}
 #

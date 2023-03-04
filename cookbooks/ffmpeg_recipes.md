@@ -84,6 +84,14 @@ When overlaying, the 2nd linkname, here [1:v] is layered OVER the first, [0:v]
 ffmpeg -i mybackground.mp4 -c:v libvpx-vp9 -i what_I_want_to_overlay.webm -filter_complex "[0:v][1:v]overlay=y=800" -map 0:a final_short.mp4
 ```
 
+Overlay caption PNG on background PNG and create video to length of audio.  This won't work for 1 second vids (audio file), you'll need to check audio length and if under a couple of seconds set -t 2.
+
+```
+ffmpeg -loop 1 -i backgrounds\bg_yellow.jpg -i Text_to_Speech\1_tts.mp3 -i captions\1caption.png -filter_complex "[2:v] format=rgba[ovr];[0:v][ovr] overlay=90:1300" -c:v libx264 -c:a copy -pix_fmt yuv420p -r 30 -shortest -y out.mp4
+```
+
+
+
 ## For Editing
 
 Concat files

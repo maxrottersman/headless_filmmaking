@@ -1,0 +1,30 @@
+
+
+
+
+.\s6_captions_to_captions_timed.ps1
+.\s3_notimings_create_caption_pngs.ps1
+.\n1_text_to_speech_google.ps1
+.\s4_add_captions_to_a_background.ps1
+.\s5_concat_captioned_vids.ps1
+
+
+
+
+
+Brexit and Putin Process
+2/28/23
+
+1. In OBS I record some ad-hoc ranting
+2. then I wrote a script with what worked
+3. Set up script to record/edit on telepromper setup
+4. pull WAV file using shutter
+5. Have Azure create captions file (can prob get Premiere to do it too).
+6. Create Pr project, using 1080x1920 PNG background to create short format sequence
+7. Drag my video rant onto it.  Place above
+8. Fix audio so peaks near -6 db (multiband compressor, broadcase preset, might improve, but didn't use it here)
+9. Pull SRT file into Pr.
+10. Double click on one to open SRT edit pane on left
+11. Select all captions (shift key) so I can change format of all
+12. Watch video and edit each caption so the words come at best time (also, need to fix spelling or where I need commas, etc).
+13. In export, make sure "captions" is set to "burn in"

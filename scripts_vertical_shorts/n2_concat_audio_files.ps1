@@ -18,7 +18,7 @@ if (Test-Path .\$Output_Audio) {
 
 # create our file list of videos for concatenation
 $FileName = "files_audio.txt"
-$captions = Import-Csv .\captions.txt -delimiter "|"
+$captions = Import-Csv $Folder_Captions$File_Captions_Timings -delimiter "|"
 
 #
 # First write text file with filenames for ffmpeg to concat
@@ -28,7 +28,7 @@ $captions = Import-Csv .\captions.txt -delimiter "|"
 	
 	Write-host $filenumber
 	
-	echo "file `'${Folder_Text_To_Speech}duration_fix${filenumber}_tts.wav`'" >> .\$FileName
+	echo "file `'${Folder_Text_To_Speech}duration_fix${filenumber}_tts.mp3`'" >> .\$FileName
 	
 	}
 #

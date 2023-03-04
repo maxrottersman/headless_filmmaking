@@ -1,9 +1,9 @@
-
-
 # Load Project Settings We Have in our settings.ini file. Explanation below
 Get-Content ".\settings.ini" | foreach-object -begin {$h=@{}} -process { $k = [regex]::split($_,'='); if(($k[0].CompareTo("") -ne 0)-and ($k[0].StartsWith("[") -ne $True)) { $h.Add($k[0], $k[1]) } }
 
 # Config from settings.ini file
+$Folder_Captions = $h.Get_Item("Folder_Captions").Trim()
+$File_Captions_Timings = $h.Get_Item("File_Captions_Timings").Trim()
 $Folder_Text_To_Speech = $h.Get_Item("Folder_Text_To_Speech").Trim()
 
 # Setup Object TEXT to SPEECH
@@ -11,7 +11,7 @@ Add-Type -AssemblyName System.speech
 
 
 # Load text
-$captions = Import-Csv .\captions.txt -delimiter "|"
+$captions = Import-Csv $Folder_Captions$File_Captions_Timings -delimiter "|"
 $idx = 1
 
 	ForEach ($caption in $captions){

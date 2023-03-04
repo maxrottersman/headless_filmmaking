@@ -15,7 +15,7 @@ $Line_Number = 1
 $lines = "FILENUMBER|LENGTHSECONDS|CAPTIONTEXT`n"
 
 	ForEach ($caption in $captions){
-	$textline = $($caption.TEXT)
+	$textline = $($caption.CAPTIONTEXT)
 	
 	$wordCount = ($textline -split '\W+' | Measure-Object).Count / $Words_To_Seconds
 	$Line_Seconds = [Math]::Ceiling($wordCount)
