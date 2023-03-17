@@ -9,10 +9,13 @@ $Words_To_Seconds = $h.Get_Item("Words_To_Seconds")
 $captions = Import-Csv $Folder_Captions\captions.txt -delimiter "|"
 $captions_timings_file = $Folder_Captions + "\captions_timings.txt" 
 
+# remove last timing file
+if ($captions_timings_file) {
+   Remove-Item $captions_timings_file -verbose}
 
 
 $Line_Number = 1
-$lines = "FILENUMBER|LENGTHSECONDS|CAPTIONTEXT`n"
+$lines = "FILENUMBER|LENGTHSECONDS|CAPTIONTEXT|TTSVOICE|TTSPITCH|TTSSPEED`n"
 
 	ForEach ($caption in $captions){
 	$textline = $($caption.CAPTIONTEXT)

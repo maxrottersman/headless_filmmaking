@@ -20,6 +20,8 @@ $output_videos = "output_videos\"
 	# Don't need here but used to create panned vids	
 	#$frames = ([int]$lengthseconds * 30)
 	
+	# -c:a aac -b:a 128k -c:v libx264 -pix_fmt yuv420p
+	# -c:v prores_ks -profile:v 1 -vendor apl0 -bits_per_mb 5000 -pix_fmt yuv422p10le -c:a pcm_s16le 
 	
 	# Won't fade in -> ,fade=in:st=0:d=02:alpha=1:alpha=1
 	# ffmpeg -loop 1 -i backgrounds\bg_yellow.jpg -i Text_to_Speech\2_tts.mp3 -i captions\2caption.png -filter_complex "[2:v] format=rgba[ovr];[0:v][ovr] overlay=90:1300" -c:v libx264 -c:a copy -pix_fmt yuv420p -r 30 -shortest -y out.mp4

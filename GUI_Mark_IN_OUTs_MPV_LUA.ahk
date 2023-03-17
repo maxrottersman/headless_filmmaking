@@ -39,7 +39,8 @@ Gui Add, Edit, x23 y120 w741 h60 -VScroll vedit_ffmpeg, ffmpeg...
 ; LAST ROW
 Gui Add, Button, gSaveOpenTimelineIO x20 y190 w261 h30, Save In/Outs OpenTimeLineIO
 Gui Add, Button, gProcess x590 y190 w80 h30, &Process
-Gui Add, Button, gffmpeg_IT x300 y190 w80 h30, ffmpeg_IT
+Gui Add, Button, gffMPEG_Transcode x300 y190 w110 h30, ffMPEG_Transcode
+Gui Add, Edit, vFileSuffix x440 y190 w120 h30 -VScroll
 ; for adding functionality, testing
 ;Gui Add, Button, gTest2 x386 y190 w60 h30, Test2
 ;Gui Add, Button, gTest3 x460 y190 w60 h30, Test3
@@ -83,10 +84,19 @@ guicontrolget, VidFilename,,VidFilename
 StringReplace source_file, VidFilename, _TLproxy,
 StringReplace target_file, VidFilename, _TLproxy,_trimmed
 
+guicontrolget, FileSuffix,,FileSuffix
+SplitPath, source_file,, source_folder
+target_file_transcode = %source_folder%\%FileSuffix%.mp4
+
+; COPY
 str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i %source_file% -c copy %target_file%
 
-GuiControl,,edit_ffmpeg,%str_ffmpeg% ;%Clipboard%
 
+; TRANSCODE
+; -c:v  libx264 -c:a aac -b:a 128k -y
+str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i %source_file% -c:v libx264 -c:a aac -b:a 128k -y %target_file_transcode%
+
+GuiControl,,edit_ffmpeg,%str_ffmpeg% ;%Clipboard%
 
 }
 Get_OCR_TL(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
@@ -103,22 +113,25 @@ Process(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
 RunWait, %comspec% /k %str_ffmpeg%
 }
 
-ffmpeg_IT(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
-guicontrolget, IN,, IN
-guicontrolget, OUT,, OUT
-cleanIN := RegExReplace(IN,"\.? *(\n|\r)+","")
-cleanOUT := RegExReplace(OUT,"\.? *(\n|\r)+","")
+; *************
+; TRANSCODE
+; *************
+ffMPEG_Transcode(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
+;guicontrolget, IN,, IN
+;guicontrolget, OUT,, OUT
+;cleanIN := RegExReplace(IN,"\.? *(\n|\r)+","")
+;cleanOUT := RegExReplace(OUT,"\.? *(\n|\r)+","")
 
-guicontrolget, VidFilename,,VidFilename
-StringReplace source_file, VidFilename, _TLproxy,
-StringReplace target_file, VidFilename, _TLproxy,_trimmed
+;guicontrolget, VidFilename,,VidFilename
+;StringReplace source_file, VidFilename, _TLproxy,
+;StringReplace target_file, VidFilename, _TLproxy,_trimmed
 
-;msgbox %target_file%
+;GuiControl,,edit_ffmpeg,%str_ffmpeg% ;%Clipboard%
 
-str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i %source_file% -c copy %target_file%
+RunWait, %comspec% /k %str_ffmpeg%
 
-GuiControl,,edit_ffmpeg,%str_ffmpeg% ;%Clipboard%
 }
+
 Test2(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
 }
 

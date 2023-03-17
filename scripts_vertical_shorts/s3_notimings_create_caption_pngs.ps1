@@ -13,6 +13,7 @@ $CapWidth = $h.Get_Item("CapWidth")
 #$CapWidth = [math]::Round([int]$ProjectWidth *[decimal]$CaptionSizeAdjustment)
 #$CapHeight = [math]::Round([int]$ProjectHeight *[decimal]$CaptionSizeAdjustment)
 
+# KLUDGE for now quick fix
 $captions = Import-Csv $Folder_Captions$File_Captions -delimit "|"
 
 # An array of random colors for variety

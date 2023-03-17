@@ -1,0 +1,11 @@
+FILENAME|FILENUMBER|IMGWIDTH|IMGHEIGHT|POSX|POSW
+D:\ContentResources\graphics\Ukraine_subway.jpg
+D:\ContentResources\graphics\artillery_shells.jpg
+D:\ContentResources\graphics\begging.jpg
+D:\ContentResources\graphics\negotiate_russia_ukraine.jpg
+D:\ContentResources\graphics\anger_ukrainian.jpg
+D:\ContentResources\graphics\child_stressed.jpg
+D:\ContentResources\graphics\anger_ukrainian.jpg
+D:\ContentResources\graphics\violence_man.jpg
+D:\ContentResources\graphics\talk.jpg
+D:\ContentResources\graphics\grave.jpg

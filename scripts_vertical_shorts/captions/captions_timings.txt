@@ -1,12 +1,12 @@
 FILENUMBER|LENGTHSECONDS|CAPTIONTEXT
-1|6|Russia invading Ukraine, shelling, torturing, raping and killing
+1|5|Russians shelling, torturing, raping and killing Ukrainians
 2|8|West says, we’ll give you some weapons, hopefully enough
-3|5|Not, for certain, all you’d need
-4|7|Okay, you’ve had a year, let’s negotiate
+3|5|Not, for certain, all you’ll need
+4|5|Okay, you’ve had a year, negotiate
 5|3|Ukraine to West,
-6|8|What part of torturing, raping and killing don’t you get
-7|4|Time to fight dirty.  
-8|10|West, you’re with us or against us, sorry, no, not sorry.
+6|10|What part of our children tortured, raped and murdered don’t you get?
+7|5|You leave us no choice 
+8|8|Time to do to them what they do to us
 9|7|You, Mr. America, always talk tough about  'consequences'
-10|9|But it’s you who are next in line for consequences.
+10|6|But evil will find you too, God forbid
 

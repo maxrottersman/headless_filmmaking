@@ -13,7 +13,7 @@ $idx = 1
 
 	ForEach ($caption in $captions){
 	$filename = $($caption.FILENAME)
-	$cmd = "magick $( $filename) -resize 800x  $Folder_Graphics$($idx)_forYT.jpg"
+	$cmd = "magick $( $filename) -resize 1080x  $Folder_Graphics$($idx)_forYT.jpg"
 	
 	Write-Host $cmd
 	Invoke-Expression $cmd
