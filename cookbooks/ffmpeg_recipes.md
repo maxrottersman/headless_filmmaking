@@ -76,6 +76,16 @@ Cut and fade out audio
  ffmpeg -i source.mp3 -ss 00:00:00 -t 00:00:56 -filter_complex "afade=type=out:duration=5:start_time=51" source_fade_and_cut.wav
 ```
 
+Create a video from an image and audio file
+
+```
+ffmpeg -loop 1 -i image.jpg -i audio.wav -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest image_plus_audio.mp4
+```
+
+Or to a specific amount of time
+
+-t 11 (after audio params)
+
 ## Overlaying
 
 When overlaying, the 2nd linkname, here [1:v] is layered OVER the first, [0:v]
@@ -256,6 +266,42 @@ ffmpeg -f lavfi -i color=c=black:s=1080x1920:r=30 -filter_complex  "[0]split[txt
 
 ffmpeg -i NYT_scroll.mp4 -filter_complex  "[0]split[txt][orig];[txt]drawtext=fontfile=tahoma.ttf:fontsize=80:fontcolor=green:x=100:y=(h-100*(t/2))-(h/2):textfile=Scroll.txt:bordercolor=white:borderw=3[txt];[orig]crop=iw:50:0:0[orig];[txt][orig]overlay" -c:v  libx264 -y NYT_scroll_with_text_scrolling.mp4
 ```
+
+## Synchronize Audio (win batch format)
+
+Step 1: Add Timecode to a video
+
+```
+ffmpeg -i "%~nx1" -ss 00:00:00 -to 00:00:59 -vf  "drawtext=text='%%{pts\:hms}':fontfile=tahoma.ttf:fontsize=48:fontcolor=white:box=1:boxborderw=6:boxcolor=black@0.75:x=(w-text_w)/2:y=h-text_h-20" -c:a copy -y ""%~n1_timecode%~x1"
+```
+
+Step 2: Create waveform visualization for external audio
+
+```
+ffmpeg -i "%~nx1" -ss 00:00:00 -to 00:00:59 -filter_complex "[0:a]showwaves=s=1280x720:mode=line:rate=30,format=yuv420p[v]" -map "[v]" -map 0:a -r 30 -y "%~n1_waveform.mp4"
+```
+
+Step 3: Put that waveform visualization through step 1 to add timecode on bottom.
+
+Step 4: After calculating time of silence before external audio, create audio file of silence at that length.
+
+```
+ffmpeg -f lavfi -t %t_silence% -i anullsrc=cl=mono -y silence_to_sync_audio.wav
+```
+
+Step 5: Add the above silence to the original external audio (file) for new audio file that should be synched to original video
+
+```
+ffmpeg -i "silence_to_sync_audio.wav" -i "extaudio.mp3" -filter_complex [0:0][1:0]concat=n=2:v=0:a=1[out] -map [out] -y "extaudio_synced.wav"
+```
+
+Now replace audio in original video with new external audio (that had silence added to begin to synch it up)
+
+```
+ffmpeg -i video.mp4 -i extaudio_synced.wav -c:v copy -map 0:v:0 -map 1:a:0 -y  video_synced_extaudio.mp4
+```
+
+
 
 ## CODECS
 
