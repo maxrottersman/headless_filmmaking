@@ -267,6 +267,44 @@ ffmpeg -f lavfi -i color=c=black:s=1080x1920:r=30 -filter_complex  "[0]split[txt
 ffmpeg -i NYT_scroll.mp4 -filter_complex  "[0]split[txt][orig];[txt]drawtext=fontfile=tahoma.ttf:fontsize=80:fontcolor=green:x=100:y=(h-100*(t/2))-(h/2):textfile=Scroll.txt:bordercolor=white:borderw=3[txt];[orig]crop=iw:50:0:0[orig];[txt][orig]overlay" -c:v  libx264 -y NYT_scroll_with_text_scrolling.mp4
 ```
 
+
+
+## Window Batch Tricks
+
+```winBatch
+setlocal
+REM | change to current folder
+pushd "%~dp0"
+
+@echo off
+
+REM drag and drop file to extract audio from into variable "file_name"
+set "file_name=%~1"
+
+REM Mono 16bit audio (voice) is generally all I need
+REM uses existing file name (stem), %~n1, and adds "_audio.wav" to end for
+REM output file name
+ffmpeg -i %file_name% -vn -acodec pcm_s16le -ac 1 -ar 16000 %~n1_audio.wav
+
+popd
+```
+
+If we want to create an output video in the same format, say mp4.  NOTE: If we have % in our ffmpeg command double it to escape in winBatch.
+
+```
+@echo off
+REM drag and drop file to background removed video
+
+set "file_name=%~1"
+
+REM add timecode to video (-c:a copy remove audio -an)
+ffmpeg -i %file_name% -ss 00:00:00 -to 00:00:59 -r 30 -vf  "drawtext=text='%%{pts\:hms}':fontfile=tahoma.ttf:fontsize=48:fontcolor=white:box=1:boxborderw=6:boxcolor=black@0.75:x=(w-text_w)/2:y=h-text_h-40" -an -y %~n1_1minute_timecode%~x1
+
+popd
+```
+
+
+
 ## Synchronize Audio (win batch format)
 
 Step 1: Add Timecode to a video
