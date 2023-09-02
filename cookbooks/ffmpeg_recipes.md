@@ -240,6 +240,20 @@ ffplay -f lavfi -i color=color=blue -vf scale=1280x720,fps=20,drawtext=text="Max
 
 More info about lt=less than, lte3 = less than or equal, and the enable stuff here.  Basically allows you to say when in time something should happen or not happen [drawtext examples](https://ffmpeg.org/ffmpeg-filters.html#Examples-71) and sytax, which contains explanation of tw, th, etc. [syntax](http://ffmpeg.org/ffmpeg-filters.html#Syntax)
 
+## Stabilization
+
+From https://www.paulirish.com/
+
+```
+ffmpeg -i clip.mkv -vf vidstabdetect -f null -
+
+*# The second pass ('transform') uses the .trf and creates the new stabilized video.*
+
+ffmpeg -i clip.mkv -vf vidstabtransform clip-stabilized.mkv
+```
+
+
+
 ## Text
 
 2 lines of text
