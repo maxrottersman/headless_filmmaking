@@ -303,6 +303,29 @@ ffmpeg -i %file_name% -vn -acodec pcm_s16le -ac 1 -ar 16000 %~n1_audio.wav
 popd
 ```
 
+Another take
+
+```
+setlocal
+REM | change to current folder
+pushd "%~dp0"
+REM drag and drop file to extract audio from into variable "file_name"
+set file_name_input="%~1"
+set file_name_output="%~1_normalized.wav"
+
+echo %file_name_input%
+echo %file_name_output%
+REM pause
+
+@echo off
+
+ffmpeg -i %file_name_input% -filter:a loudnorm -y %file_name_output%
+
+popd
+```
+
+
+
 If we want to create an output video in the same format, say mp4.  NOTE: If we have % in our ffmpeg command double it to escape in winBatch.
 
 ```
