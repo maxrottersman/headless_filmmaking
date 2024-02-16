@@ -8,6 +8,8 @@ SetBatchLines -1
 ; IN and OUT video trim points.
 ; https://github.com/Arieleg/mpv-copyTime/blob/master/copyTime.lua
 
+; AHK v2 requires quote around file names for ffmpeg and for run command filename
+
 global pid_mpv
 global title_mpv
 global TL_x :=0, TL_y :=0, BR_x :=0, BR_y :=0, ThisWin_H, ThisWin_W
@@ -89,12 +91,12 @@ SplitPath, source_file,, source_folder
 target_file_transcode = %source_folder%\%FileSuffix%.mp4
 
 ; COPY
-str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i %source_file% -c copy %target_file%
+str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i "%source_file%" -c copy "%target_file%"
 
 
 ; TRANSCODE
 ; -c:v  libx264 -c:a aac -b:a 128k -y
-str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i %source_file% -c:v libx264 -c:a aac -b:a 128k -y %target_file_transcode%
+str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i "%source_file%" -c:v libx264 -c:a aac -b:a 128k -y "%target_file_transcode%"
 
 GuiControl,,edit_ffmpeg,%str_ffmpeg% ;%Clipboard%
 
@@ -154,7 +156,7 @@ GuiControl,,VidFilename,%A_GuiEvent%
 
 MPV_Filename := A_GuiEvent
 
-Run C:\Max_Software\MPV\mpv.exe %MPV_Filename% --geometry=800x600,,, pid_mpv
+Run C:\Max_Software\MPV\mpv.exe  "%MPV_Filename%" --geometry=800x600,,, pid_mpv
 WinWait % "ahk_pid" pid_mpv
 
 WinGetTitle, pid_title, ahk_pid %pid_mpv%
