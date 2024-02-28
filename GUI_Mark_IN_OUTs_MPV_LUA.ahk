@@ -21,36 +21,45 @@ GUI_width := 800
 GUI_height := 240
 
 MakeGui:
+
+; ROW 1
 Gui +hWndhGUITrimmer
 ;Gui, GuiTrimmer:New
-Gui Add, Button, gMark_IN x20 y0 w80 h30, Mark &In
-Gui Add, Button, gMark_OUT x114 y0 w80 h30, Mark &OUT
-Gui Add, Button, hWndhBtnReset5 gReset x207 y0 w80 h30, &Reset
-;ControlColor(hBtnReset5, hMainWnd, 0xFFFF00)
+Gui Add, Button, gMark_IN x51 y0 w80 h30, Mark &In
+Gui Add, Button, gMark_OUT x200 y0 w80 h30, Mark &OUT
+
+Gui Add, Button, hWndhBtnCreateProxy gCreateProxy x320 y0 w100 h30, &CreateProxy
+Gui Add, Button, hWndhBtnPlayVid gPlayVid x460 y0 w100 h30, &PlayVid
+
+;ROW 2
 Gui Add, Text, x20 y40 w29 h30 +0x200, IN:
-Gui Add, Edit, vIN x51 y40 w200 h30 
-Gui Add, Text, x260 y40 w52 h30 +0x200, OUT:
-Gui Add, Edit, vOUT x320 y40 w200 h30 
+Gui Add, Edit, vIN x51 y40 w100 h30 
+Gui Add, Text, x160 y40 w52 h30 +0x200, OUT:
+Gui Add, Edit, vOUT x200 y40 w100 h30 
+Gui Add, Text, x336 y40 w60 h30 +0x200, Proxy:
+Gui Add, Edit, x400 y40 w360 h30 vProxyVidFilename -VScroll
 
-Gui Add, Button, gGetVideoFilename x20 y79 w200 h30, Get Video's Filename
-Gui Add, Text, x257 y84 w74 h23 +0x200, Filename:
-Gui Add, Edit, x336 y80 w450 h30 vVidFilename -VScroll
+;ROW 3
+Gui Add, Text, x23 y84 w74 h23 +0x200, Filename:
+Gui Add, Edit, x80 y80 w450 h30 vVidFilename -VScroll
 
+;ROW 4
 Gui Add, Edit, x23 y120 w741 h60 -VScroll vedit_ffmpeg, ffmpeg...
 
 ; LAST ROW
-Gui Add, Button, gSaveOpenTimelineIO x20 y190 w261 h30, Save In/Outs OpenTimeLineIO
-Gui Add, Button, gProcess x590 y190 w80 h30, &Process
-Gui Add, Button, gffMPEG_Transcode x300 y190 w110 h30, ffMPEG_Transcode
-Gui Add, Edit, vFileSuffix x440 y190 w120 h30 -VScroll
+Gui Add, Text, x23 y195, Clip Save-To Name:
+Gui Add, Edit, vFileSuffix x140 y190 w300 h30 -VScroll
+Gui Add, Button, gProcess x500 y190 w80 h30, &Process
+Gui Add, Button, gQuit x600 y190 w80 h30, E&xit
 ; for adding functionality, testing
 ;Gui Add, Button, gTest2 x386 y190 w60 h30, Test2
 ;Gui Add, Button, gTest3 x460 y190 w60 h30, Test3
-Gui Add, Button, gQuit x709 y190 w80 h30, E&xit
+
+
 Gui Font, s16 Bold
 Gui Add, Text, x3 y-2 w16 h46 +0x200, ^
 
-Gui Show, w%GUI_width% h%GUI_height%, GUIMark ;IN and OUT Points
+Gui Show, w%GUI_width% h%GUI_height%, Maxotics_VideoClipCreator ;IN and OUT Points
 
 Return
 
@@ -62,19 +71,117 @@ WinActivate, ahk_pid %pid_mpv% ; should work
 sleep 250
 Send {ctrl down}c{ctrl up}
 sleep 500
-WinActivate, %GUIMark%
+WinActivate, %Maxotics_VideoClipCreator%
 GuiControl,,IN,%Clipboard%
 }
+; *********************************
 ; ******** MARK OUT **********
+; *********************************
 Mark_OUT(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
 Clipboard :=
 WinActivate, ahk_pid %pid_mpv% ; should work
 sleep 250
 Send {ctrl down}c{ctrl up}
 sleep 500
-WinActivate, %GUIMark%
+WinActivate, %Maxotics_VideoClipCreator%
 GuiControl,,OUT,%Clipboard%
 
+Create_ffmpeg_command()
+
+}
+
+Get_OCR_TL(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
+}
+Get_OCR_BR(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
+}
+
+; *************************
+; CREATE PROXY
+; *************************
+CreateProxy(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
+
+; get filename from edit box
+guicontrolget, VidFilename,,VidFilename
+;msgbox %VidFilename%
+
+StringReplace, target_file, VidFilename, .mp4, .avi
+;msgbox %target_file%
+
+; put filename in VidFilename text box
+GuiControl,,ProxyVidFilename,%target_file% 
+
+; break out
+;return
+
+; TRANSCODE PROXY
+;  ffmpeg -i test.mp4 -vf "scale=960:540" -vcodec mjpeg -qscale:v 31 output960.avi
+; PCM audio didn't work as well as AAC: -c:a aac -b:a 192k
+; FLAC didn't work well: -c:a flac
+; FFMPEG: -vcodec mjpeg -qscale:v 31 -c:a aac -b:a 192k -y
+; ffmpeg -i input.mp4 -vf "scale=960:540" -c:v prores_ks -profile:v 0 -c:a pcm_s16le output.mov
+; PRORES PROXY: -c:v prores_ks -profile:v 0 -c:a pcm_s16le
+
+str_ffmpeg = ffmpeg -i "%VidFilename%" -vf "scale=960:540" -vcodec mjpeg -qscale:v 31 -c:a aac -b:a 192k -y "%target_file%"
+
+GuiControl,,edit_ffmpeg,%str_ffmpeg% ;%Clipboard%
+
+RunWait, %comspec% /k %str_ffmpeg%
+
+}
+
+; **********
+; PLAY VIDEO
+; **********
+PlayVid(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
+
+; name of textbox is vVidFilename, AHK throws out "v"
+GuiControlGet, MPV_Filename, , ProxyVidFilename
+
+Run C:\Max_Software\MPV_2024\mpv.exe  "%MPV_Filename%" --geometry=800x600,,, pid_mpv
+WinWait % "ahk_pid" pid_mpv
+
+WinGetTitle, pid_title, ahk_pid %pid_mpv%
+
+WinGetPos, X, Y, Width, Height, ahk_pid %pid_mpv%
+x_MPV := X
+y_MPV := Y
+width_MPV := Width
+height_MPV := Height
+
+WinActivate, %Maxotics_VideoClipCreator%
+WinWait, %Maxotics_VideoClipCreator%
+WinGetPos, X, Y, Width, Height, %Maxotics_VideoClipCreator%
+x_GUI := X
+y_GUI := Y
+width_GUI := Width * (A_ScreenDPI/96)
+height_GUI := Height * (A_ScreenDPI/96)
+
+; If move MPV above GUI
+x_GUI_move := round(x_GUI + ((Width - width_MPV)/2),0)
+WinMove, %pid_title%, ,x_GUI_move, y_MPV - height_MPV + 100
+
+
+}
+
+GetVideoFilename(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
+}
+
+; *************
+; PROCESS
+; *************
+Process(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
+
+; regenerate in case name names
+Create_ffmpeg_command()
+
+Run, %comspec% /c %str_ffmpeg%
+;RunWait if I want the command window to stay open
+; /k after comspec to keep window open
+}
+
+; Define a function
+Create_ffmpeg_command() {
+    ;MsgBox, Function called with parameter: %parameter%
 ; Now let's create ffmpeg command
 ; Same as ffmpeg_IT button command
 guicontrolget, IN,, IN
@@ -91,28 +198,13 @@ SplitPath, source_file,, source_folder
 target_file_transcode = %source_folder%\%FileSuffix%.mp4
 
 ; COPY
-str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i "%source_file%" -c copy "%target_file%"
-
+;str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i "%source_file%" -c copy ;"%target_file%"
 
 ; TRANSCODE
 ; -c:v  libx264 -c:a aac -b:a 128k -y
-str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i "%source_file%" -c:v libx264 -c:a aac -b:a 128k -y "%target_file_transcode%"
-
-GuiControl,,edit_ffmpeg,%str_ffmpeg% ;%Clipboard%
-
-}
-Get_OCR_TL(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
-}
-Get_OCR_BR(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
-}
-Reset(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
-}
-SaveOpenTimelineIO(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
-}
-GetVideoFilename(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
-}
-Process(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
-RunWait, %comspec% /k %str_ffmpeg%
+str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i "%source_file%" -c:v libx264 -c:a aac -b:a 128k -y "%target_file_transcode%"	
+	
+GuiControl,,edit_ffmpeg,%str_ffmpeg% ;%Clipboard%	
 }
 
 ; *************
@@ -148,40 +240,18 @@ PreviewOCRBox(CtrlHwnd, GuiEvent, EventInfo, ErrLevel := "") {
 }
 
 ; ***********************
+; *** GuiDropFiles is a native AHK function
 ; *** DROP VIDEO FILE ***
 ; ***********************
 GuiDropFiles:
 {
+; put filename in VidFilename text box
 GuiControl,,VidFilename,%A_GuiEvent% 
 
-MPV_Filename := A_GuiEvent
+StringReplace, target_file, A_GuiEvent, .mp4, .avi
 
-Run C:\Max_Software\MPV\mpv.exe  "%MPV_Filename%" --geometry=800x600,,, pid_mpv
-WinWait % "ahk_pid" pid_mpv
-
-WinGetTitle, pid_title, ahk_pid %pid_mpv%
-
-WinGetPos, X, Y, Width, Height, ahk_pid %pid_mpv%
-x_MPV := X
-y_MPV := Y
-width_MPV := Width
-height_MPV := Height
-
-WinActivate, %GUIMark%
-WinWait, %GUIMark%
-WinGetPos, X, Y, Width, Height, %GUIMark%
-x_GUI := X
-y_GUI := Y
-width_GUI := Width * (A_ScreenDPI/96)
-height_GUI := Height * (A_ScreenDPI/96)
-
-; If move MPV above GUI
-x_GUI_move := round(x_GUI + ((Width - width_MPV)/2),0)
-WinMove, %pid_title%, ,x_GUI_move, y_MPV - height_MPV + 100
-
-; if Move GUI around player
-;x_MPV_move := round(x_MPV + ((width_MPV - width_GUI)/2),0)
-;WinMove, GUIMark, ,x_MPV_move, y_MPV + 600 +50
+; put filename in VidFilename text box
+GuiControl,,ProxyVidFilename,%target_file% 
 
 }
 return
