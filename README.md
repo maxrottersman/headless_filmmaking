@@ -9,9 +9,9 @@ You need [AutoHotKey](https://www.autohotkey.com/)  installed for these scripts 
 
 INSTRUCTIONS.  First, you must have ffmpeg installed on your Windows PC and it must be findable through the Windows environment path  (or you'll have to hard code where you have it in the code).  Next, put all these files in a folder.  For the Webcam capture, you'll want to press the button "Load Available Capture Devices".  From the list, pick the webcam and microphone devices you want to use.  Then press "Save My Capture Devices".  They should load every time you launch the GUI (unless you change them)
 
-**Quick video trim tool for videos** (updated 2/27/2024)
+**Quick video trim tool for videos** (updated 3/1/2024)
 
-I don't know why I can't find a solution that works the way I want it to.  Any ideas?  Anyway, this does exactly what I want.  
+I don't know why I can't find a solution that works the way I want it to.  Any ideas?  Anyway, this does exactly what I want.  (there's also a PYTHON version I recently created using Co-Pilot)
 
 1. Ability to select a section of a video and save it to another video with the name I give to it (the clip)
 
