@@ -1,0 +1,1 @@
+ffmpeg -ss mark_in -to mark_out -i "video_file_source" -c:v libx264 -c:a aac -b:a 128k -y "video_file_target"	

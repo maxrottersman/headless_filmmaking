@@ -105,6 +105,7 @@ guicontrolget, VidFilename,,VidFilename
 ;msgbox %VidFilename%
 
 StringReplace, target_file, VidFilename, .mp4, .avi
+StringReplace, target_file, target_file, .mov, .avi
 ;msgbox %target_file%
 
 ; put filename in VidFilename text box
@@ -189,13 +190,21 @@ guicontrolget, OUT,, OUT
 cleanIN := RegExReplace(IN,"\.? *(\n|\r)+","")
 cleanOUT := RegExReplace(OUT,"\.? *(\n|\r)+","")
 
+; Split the timecode into minutes, seconds and milliseconds
+minutes := SubStr(cleanIN, 4, 2)
+seconds := SubStr(cleanIN, 7, 2)
+milliseconds := SubStr(cleanIN, 10)
+
+; Format the seconds and milliseconds
+prefix_starttime := Format("{:02d}_{:02d}_{}", minutes, seconds, milliseconds)
+
 guicontrolget, VidFilename,,VidFilename
 StringReplace source_file, VidFilename, _TLproxy,
 StringReplace target_file, VidFilename, _TLproxy,_trimmed
 
 guicontrolget, FileSuffix,,FileSuffix
 SplitPath, source_file,, source_folder
-target_file_transcode = %source_folder%\%FileSuffix%.mp4
+target_file_transcode = %source_folder%\%prefix_starttime%_%FileSuffix%.mp4
 
 ; COPY
 ;str_ffmpeg = ffmpeg -ss %cleanIN% -to %cleanOUT% -i "%source_file%" -c copy ;"%target_file%"
